@@ -1,4 +1,4 @@
-import { FetchJson } from "../api.js";
+import { FetchJson } from "./api.js";
 
 /**
  * Fetch all notifications for the current user
