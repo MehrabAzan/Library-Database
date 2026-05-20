@@ -1,235 +1,10 @@
 import mysql from "mysql2";
 import dotenv from "dotenv";
-import http from "node:http";
+import express from "express";
 import crypto from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { URL, fileURLToPath } from "node:url";
-
-function EscapeRegularExpression(value) {
-  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-function CompileRoutePath(pathname) {
-  const normalizedPathname =
-    typeof pathname === "string" && pathname.trim() !== ""
-      ? pathname.trim()
-      : "/";
-  const segments = normalizedPathname.split("/").filter(Boolean);
-  const paramNames = [];
-  const regexSource =
-    segments.length === 0
-      ? "^/?$"
-      : `^/${segments
-        .map((segment) => {
-          if (segment.startsWith(":")) {
-            paramNames.push(segment.slice(1));
-            return "([^/]+)";
-          }
-
-          return EscapeRegularExpression(segment);
-        })
-        .join("/")}/?$`;
-  const matcher = new RegExp(regexSource);
-
-  return (requestPathname) => {
-    const match = matcher.exec(requestPathname);
-
-    if (!match) {
-      return null;
-    }
-
-    return Object.fromEntries(
-      paramNames.map((paramName, index) => [
-        paramName,
-        decodeURIComponent(match[index + 1] ?? ""),
-      ])
-    );
-  };
-}
-
-function GetHeaderValue(headers, headerName) {
-  const value = headers[String(headerName ?? "").toLowerCase()];
-
-  if (Array.isArray(value)) {
-    return value.join(", ");
-  }
-
-  return value;
-}
-
-function SetCorsHeaders(req, res) {
-  const requestedHeaders = String(
-    req.headers["access-control-request-headers"] ?? ""
-  ).trim();
-
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    requestedHeaders || "Content-Type, Authorization"
-  );
-  res.setHeader("Vary", "Origin, Access-Control-Request-Headers");
-}
-
-async function ReadJsonBody(req) {
-  const contentType = String(req.headers["content-type"] ?? "").toLowerCase();
-
-  if (!/application\/(?:[\w.+-]+\+)?json/.test(contentType)) {
-    return {};
-  }
-
-  const chunks = [];
-
-  for await (const chunk of req) {
-    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
-  }
-
-  if (chunks.length === 0) {
-    return {};
-  }
-
-  const text = Buffer.concat(chunks).toString("utf8").trim();
-
-  if (!text) {
-    return {};
-  }
-
-  return JSON.parse(text);
-}
-
-function EnhanceResponse(res) {
-  res.status = function status(code) {
-    this.statusCode = code;
-    return this;
-  };
-
-  res.json = function json(payload) {
-    if (!this.headersSent && !this.getHeader("Content-Type")) {
-      this.setHeader("Content-Type", "application/json; charset=utf-8");
-    }
-
-    this.end(JSON.stringify(payload));
-    return this;
-  };
-
-  res.send = function send(payload) {
-    if (!this.headersSent && !this.getHeader("Content-Type")) {
-      this.setHeader(
-        "Content-Type",
-        typeof payload === "string"
-          ? "text/plain; charset=utf-8"
-          : "application/octet-stream"
-      );
-    }
-
-    this.end(payload);
-    return this;
-  };
-
-  return res;
-}
-
-function CreateApp() {
-  const routes = [];
-
-  function registerRoute(method, pathnames, handler) {
-    const normalizedPathnames = Array.isArray(pathnames) ? pathnames : [pathnames];
-
-    for (const pathname of normalizedPathnames) {
-      routes.push({
-        method,
-        matcher: CompileRoutePath(pathname),
-        handler,
-      });
-    }
-  }
-
-  async function handleRequest(req, res) {
-    EnhanceResponse(res);
-    SetCorsHeaders(req, res);
-
-    if (req.method === "OPTIONS") {
-      res.writeHead(204);
-      res.end();
-      return;
-    }
-
-    const requestUrl = new URL(
-      req.url ?? "/",
-      `http://${req.headers.host || "localhost"}`
-    );
-
-    req.path = requestUrl.pathname;
-    req.query = Object.fromEntries(requestUrl.searchParams.entries());
-    req.params = {};
-    req.body = {};
-    req.get = (headerName) => GetHeaderValue(req.headers, headerName);
-
-    try {
-      if (!["GET", "HEAD"].includes(req.method ?? "")) {
-        req.body = await ReadJsonBody(req);
-      }
-    } catch {
-      res.status(400).json({ error: "Invalid JSON body." });
-      return;
-    }
-
-    for (const route of routes) {
-      if (route.method !== req.method) {
-        continue;
-      }
-
-      const params = route.matcher(requestUrl.pathname);
-
-      if (!params) {
-        continue;
-      }
-
-      req.params = params;
-
-      try {
-        await route.handler(req, res);
-      } catch (error) {
-        console.error(error);
-
-        if (!res.writableEnded) {
-          res.status(500).json({ error: "Internal server error." });
-        }
-      }
-
-      if (!res.writableEnded) {
-        res.end();
-      }
-
-      return;
-    }
-
-    res.status(404).json({ error: "Not found." });
-  }
-
-  return {
-    get(pathnames, handler) {
-      registerRoute("GET", pathnames, handler);
-    },
-    post(pathnames, handler) {
-      registerRoute("POST", pathnames, handler);
-    },
-    put(pathnames, handler) {
-      registerRoute("PUT", pathnames, handler);
-    },
-    delete(pathnames, handler) {
-      registerRoute("DELETE", pathnames, handler);
-    },
-    listen(port, callback) {
-      const server = http.createServer((req, res) => {
-        void handleRequest(req, res);
-      });
-
-      return server.listen(port, callback);
-    },
-  };
-}
 
 const backendDirectory = path.dirname(fileURLToPath(import.meta.url));
 const uploadsDirectory = path.resolve(backendDirectory, "uploads");
@@ -243,7 +18,35 @@ const allowedImageMimeTypes = {
 
 dotenv.config({ path: path.resolve(backendDirectory, ".env") });
 
-const app = CreateApp();
+function WrapAsyncRouteHandler(handler) {
+  if (typeof handler !== "function" || handler.length > 3) {
+    return handler;
+  }
+
+  return function asyncRouteHandler(req, res, next) {
+    return Promise.resolve(handler(req, res, next)).catch(next);
+  };
+}
+
+function CreateExpressApp() {
+  const app = express();
+
+  for (const method of ["get", "post", "put", "delete"]) {
+    const registerRoute = app[method].bind(app);
+
+    app[method] = (pathnames, ...handlers) => {
+      if (method === "get" && handlers.length === 0) {
+        return registerRoute(pathnames);
+      }
+
+      return registerRoute(pathnames, ...handlers.map(WrapAsyncRouteHandler));
+    };
+  }
+
+  return app;
+}
+
+const app = CreateExpressApp();
 const port = Number(process.env.PORT) || 3000;
 const sessionMaxAgeSeconds = Math.max(
   Number(process.env.SESSION_MAX_AGE_SECONDS) || 60 * 60 * 12,
@@ -265,6 +68,38 @@ const defaultAppOrigin =
   process.env.APP_ORIGIN?.trim() ||
   process.env.FRONTEND_ORIGIN?.trim() ||
   "http://localhost:5173";
+
+app.use((req, res, next) => {
+  const requestedHeaders = String(
+    req.headers["access-control-request-headers"] ?? ""
+  ).trim();
+
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  res.set(
+    "Access-Control-Allow-Headers",
+    requestedHeaders || "Content-Type, Authorization"
+  );
+  res.set("Vary", "Origin, Access-Control-Request-Headers");
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+
+  return next();
+});
+
+app.use(
+  express.json({
+    limit: "10mb",
+    type: ["application/json", "application/*+json"],
+  })
+);
+
+app.use((req, res, next) => {
+  req.body ??= {};
+  next();
+});
 
 console.log("DB_HOST =", process.env.DB_HOST);
 console.log("DB_PORT =", process.env.DB_PORT);
@@ -4231,10 +4066,6 @@ app.delete(["/notifications", "/api/notifications"], async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port: ${port}`);
-});
-
 async function PromoteNextWaitingHold(itemId) {
   const [nextWaitingHolds] = await pool.query(
     `
@@ -6246,4 +6077,31 @@ app.get(["/reports/operations", "/api/reports/operations"], async (req, res) => 
       error: FormatServerError(error, "Failed to load operations report."),
     });
   }
+});
+
+app.use((req, res) => {
+  res.status(404).json({ error: "Not found." });
+});
+
+app.use((error, req, res, next) => {
+  if (res.headersSent) {
+    return next(error);
+  }
+
+  if (error?.type === "entity.parse.failed") {
+    res.status(400).json({ error: "Invalid JSON body." });
+    return;
+  }
+
+  if (error?.type === "entity.too.large") {
+    res.status(413).json({ error: "Request body is too large." });
+    return;
+  }
+
+  console.error(error);
+  res.status(500).json({ error: "Internal server error." });
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on port: ${port}`);
 });
