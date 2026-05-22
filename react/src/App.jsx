@@ -58,21 +58,21 @@ function NavSection({ title, links }) {
   if (!links.length) return null;
 
   return (
-    <div className="font-bold transition-all">
-      {/* <p className="mb-2 px-6 text-md font-bold tracking-[0.15em] text-white transition-all">
+    <div className="px-3 py-3">
+      <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
         {title}
-      </p> */}
+      </p>
 
-      <div className="space-y-1 font-semibold text-white transition-all whitespace-pre-line">
+      <div className="space-y-1">
         {links.map(({ to, label }) => (
           <NavLink
             key={to}
             to={to}
             className={({ isActive }) =>
-              `block w-full px-6 py-2.5 text-sm transition-colors transition-all ${
+              `block w-full rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                 isActive
-                  ? "bg-cyan-600/50 font-bold"
-                  : "text-white/90 hover:bg-cyan-600/35 "
+                  ? "bg-teal-50 text-teal-700"
+                  : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"
               }`
             }
           >
@@ -103,34 +103,34 @@ function App() {
     userType === "staff" && (roleCode === 1 || roleCode === 2)
       ? [
           // { to: "/itementry", label: "Item Entry" },
-          { to: "/itementry/manage", label: "Item\nManagement" },
+          { to: "/itementry/manage", label: "Item Management" },
           { to: "/staffloans", label: "Loans" },
           { to: "/holds", label: "Holds" },
           { to: "/stafffines", label: "Fines" },
-          { to: "/lost", label: "Lost\nItems" },
+          { to: "/lost", label: "Lost Items" },
         ]
       : [];
 
   const adminLinks =
     userType === "staff" && roleCode === 2
       ? [
-          { to: "/changerole", label: "Manage\nUsers" },
+          { to: "/changerole", label: "Manage Users" },
           { to: "/report", label: "Reports" },
-          { to: "/staffregistration", label: "Staff\nSignup" }
+          { to: "/staffregistration", label: "Staff Signup" },
         ]
       : [];
 
   return (
     <MessageProvider>
       <BrowserRouter>
-        <div className="min-h-screen flex flex-col font-sans">
+        <div className="flex min-h-screen flex-col bg-slate-50 font-sans text-slate-900">
           {/* Header */}
-          <header className="top-0 bg-[#164e63] px-6 py-1 flex justify-between items-center text-white z-10 shadow-sm">
-            <div className="flex items-center gap-3 s">
+          <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white/95 px-4 shadow-sm backdrop-blur sm:px-6">
+            <div className="flex items-center gap-3">
               {/* Hamburger Menu Toggle Button */}
               <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="p-2 mr-1 rounded-lg text-cyan-100 hover:text-white hover:bg-cyan-800 transition-colors focus:outline-none"
+                className="mr-1 rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
                 aria-label="Toggle Sidebar"
               >
                 <svg
@@ -148,18 +148,21 @@ function App() {
                 </svg>
               </button>
 
-              <NavLink to="/" className="hover:text-white transition-colors">
+              <NavLink to="/" className="transition-opacity hover:opacity-80">
                 <img
                   src="/Datahaven.jpg"
-                  className="h-9 w-9 rounded-lg bg-white p-0.5"
+                  className="h-10 w-10 rounded-lg border border-slate-200 bg-white object-cover"
                   alt="logo"
                 />
               </NavLink>
-              <NavLink to="/" className="hover:text-white transition-colors">
+              <NavLink to="/" className="transition-colors hover:text-teal-700">
                 <div>
-                  <h1 className="text-xl font-bold tracking-wide hidden sm:block">
+                  <h1 className="hidden text-lg font-semibold tracking-tight text-slate-950 sm:block">
                     Datahaven Library
                   </h1>
+                  <p className="hidden text-xs font-medium text-slate-500 md:block">
+                    Catalog and circulation
+                  </p>
                 </div>
               </NavLink>
             </div>
@@ -167,22 +170,22 @@ function App() {
             {!user ? (
               <NavLink
                 to="/login"
-                className="px-5 py-2 bg-[#0e7490] text-white font-medium rounded-lg hover:bg-cyan-600 transition-colors shadow-sm"
+                className="rounded-lg bg-teal-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
               >
                 Login
               </NavLink>
             ) : (
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
                 {userType == "staff" ? null : <NotificationBell />}
-                <span className="text-cyan-100 hidden sm:inline">
+                <span className="hidden text-sm text-slate-500 sm:inline">
                   Hello{" "}
-                  <span className="font-semibold text-white">
+                  <span className="font-semibold text-slate-950">
                     {user.first_name || "User"}
                   </span>
                 </span>
                 <NavLink
                   to="/logout"
-                  className="px-4 py-1.5 rounded-md border border-cyan-500 hover:bg-cyan-800 text-white font-medium transition-colors"
+                  className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-semibold text-slate-700 transition-colors hover:border-slate-400 hover:bg-slate-100"
                 >
                   Logout
                 </NavLink>
@@ -190,14 +193,14 @@ function App() {
             )}
           </header>
 
-          <div className="flex flex-1 overflow-hidden">
+          <div className="flex min-h-0 flex-1 overflow-hidden">
             {/* Collapsible Sidebar */}
             <aside
-              className={`bg-cyan-700/80 transition-all duration-300 ease-in-out flex-shrink-0 z-0  ${
-                isSidebarOpen ? "w-[125px]" : "w-0 overflow-hidden"
+              className={`z-0 flex-shrink-0 overflow-hidden border-r border-slate-200 bg-white transition-[width] duration-200 ease-in-out ${
+                isSidebarOpen ? "w-60" : "w-0"
               }`}
             >
-              <div className="overflow-hidden">
+              <div className="h-full overflow-y-auto py-3">
                 <NavSection title="General" links={generalLinks} />
                 <NavSection title="Staff" links={staffLinks} />
                 <NavSection title="Admin" links={adminLinks} />
@@ -205,8 +208,9 @@ function App() {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 p-8 overflow-y-auto bg-[#cffafe]">
-              <Routes>
+            <main className="flex-1 overflow-y-auto bg-slate-50 px-4 py-6 sm:px-6 lg:px-8">
+              <div className="mx-auto w-full max-w-[1440px]">
+                <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/search" element={<Search />} />
                 <Route path="/about" element={<AboutUs />} />
@@ -292,21 +296,22 @@ function App() {
                 <Route path="/report/testing" element={<TestingReport />} />
 
                 <Route path="/forgotpassword" element={<ForgotPassword />} />
-              </Routes>
+                </Routes>
+              </div>
             </main>
           </div>
 
           {/* Footer */}
-          <footer className="bg-[#164e63] text-cyan-100 pt-2 pb-4 text-sm">
-            <div className="w-full mx-auto px-6 w-full">
-              <div className="flex flex-wrap gap-8 mb-2 text-center justify-evenly wrap">
+          <footer className="border-t border-slate-200 bg-white px-4 py-4 text-sm text-slate-500 sm:px-6">
+            <div className="mx-auto w-full max-w-[1440px]">
+              <div className="mb-4 flex flex-wrap justify-between gap-6">
                 <div>
-                  <h3 className="text-white font-bold mb-1 text-lg">FAQs</h3>
-                  <ul className="space-y-1">
+                  <h3 className="mb-1 font-semibold text-slate-950">FAQs</h3>
+                  <ul className="flex flex-wrap gap-x-4 gap-y-1">
                     <li>
                       <NavLink
                         to="/policies"
-                        className="hover:text-white transition-colors"
+                        className="transition-colors hover:text-teal-700"
                       >
                         Policies
                       </NavLink>
@@ -314,7 +319,7 @@ function App() {
                     <li>
                       <NavLink
                         to="/"
-                        className="hover:text-white transition-colors"
+                        className="transition-colors hover:text-teal-700"
                       >
                         Collection
                       </NavLink>
@@ -322,14 +327,14 @@ function App() {
                   </ul>
                 </div>
                 <div>
-                  <h3 className="text-white font-bold mb-1 text-lg">
+                  <h3 className="mb-1 font-semibold text-slate-950">
                     About Us
                   </h3>
-                  <ul className="space-y-1">
+                  <ul className="flex flex-wrap gap-x-4 gap-y-1">
                     <li>
                       <NavLink
                         to="/about"
-                        className="hover:text-white transition-colors"
+                        className="transition-colors hover:text-teal-700"
                       >
                         About Datahaven
                       </NavLink>
@@ -337,7 +342,7 @@ function App() {
                     <li>
                       <NavLink
                         to="/hours"
-                        className="hover:text-white transition-colors"
+                        className="transition-colors hover:text-teal-700"
                       >
                         Hours
                       </NavLink>
@@ -346,9 +351,9 @@ function App() {
                 </div>
               </div>
 
-              <div className="flex flex-col-reverse md:flex-row justify-between items-center pt-4 border-t border-cyan-800">
-                <p className="font-medium tracking-wide">
-                  Version {version} — Datahaven Library
+              <div className="flex flex-col-reverse items-center justify-between gap-3 border-t border-slate-200 pt-4 md:flex-row">
+                <p className="font-medium">
+                  Version {version} - Datahaven Library
                 </p>
 
                 <div className="flex space-x-6">
@@ -357,7 +362,7 @@ function App() {
                     href="https://instagram.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-white transition-colors"
+                    className="transition-colors hover:text-teal-700"
                     aria-label="Instagram"
                   >
                     <svg
@@ -377,7 +382,7 @@ function App() {
                     href="https://facebook.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-white transition-colors"
+                    className="transition-colors hover:text-teal-700"
                     aria-label="Facebook"
                   >
                     <svg
@@ -397,7 +402,7 @@ function App() {
                     href="https://x.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-white transition-colors"
+                    className="transition-colors hover:text-teal-700"
                     aria-label="X (Twitter)"
                   >
                     <svg
@@ -413,7 +418,7 @@ function App() {
                     href="https://youtube.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-white transition-colors"
+                    className="transition-colors hover:text-teal-700"
                     aria-label="YouTube"
                   >
                     <svg
