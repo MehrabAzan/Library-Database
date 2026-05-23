@@ -99,7 +99,7 @@ function BuildFallbackImageSource(itemData) {
 
 export function ItemImage({
   itemData,
-  className = "h-48 w-36 shrink-0 rounded-2xl object-cover border border-slate-200 shadow-sm",
+  className = "h-48 w-36 shrink-0 rounded-md object-cover border border-slate-200 shadow-sm",
 }) {
   const fallbackSource = BuildFallbackImageSource(itemData);
   const resolvedSource =
@@ -264,13 +264,13 @@ export default function Item({ itemData }) {
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-4 rounded-3xl bg-white border border-slate-200 p-4 shadow-sm">
-        <div className="col-span-3 flex gap-6">
+      <div className="grid gap-4 rounded-lg bg-white border border-slate-200 p-4 shadow-sm lg:grid-cols-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:gap-6 lg:col-span-3">
           <ItemImage itemData={itemData} />
           <ItemHolder data={itemData} />
         </div>
 
-        <div className="col-span-1 grid grid-rows-2 items-center border-l border-slate-100 pl-6">
+        <div className="grid grid-rows-2 items-center border-t border-slate-100 pt-4 lg:col-span-1 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
           <div className="flex flex-wrap justify-center gap-2 text-center text-xs font-bold uppercase tracking-tight text-slate-500">
             <div className="flex flex-col flex-1">
               <span className="text-slate-500">Available</span>
@@ -325,8 +325,8 @@ export default function Item({ itemData }) {
                   />
 
                   {activeStaffAction ? (
-                    <div className="mt-2 flex w-full flex-col gap-2 rounded-2xl bg-slate-50 p-4 border border-slate-200 shadow-inner">
-                      <div className="text-[10px] font-bold text-sky-700 uppercase tracking-widest">
+                    <div className="mt-2 flex w-full flex-col gap-2 rounded-lg bg-slate-50 p-4 border border-slate-200 shadow-inner">
+                      <div className="text-[10px] font-bold text-sky-900 uppercase tracking-widest">
                         {activeStaffAction === "hold"
                           ? "Enter hold patron ID"
                           : "Enter checkout patron ID"}
@@ -340,7 +340,7 @@ export default function Item({ itemData }) {
                           setPatronIdInput(event.target.value)
                         }
                         placeholder="Patron ID"
-                        className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-sky-500"
+                        className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-sky-700"
                       />
 
                       <div className="flex gap-2">
@@ -514,8 +514,8 @@ export function CarouselItem({ itemData }) {
   const canPlaceHold = Number(itemData.is_removed ?? 0) !== 1;
   return (
     <div className="w-70">
-      {itemData.category != "equipment" ? (
-        <div className="h-full grid grid-rows-4 rounded-3xl bg-white border border-slate-200 p-4 transition transform hover:-translate-y-1 hover:shadow-md">
+      {itemData.category !== "equipment" ? (
+        <div className="h-full grid grid-rows-4 rounded-lg bg-white border border-slate-200 p-4 transition transform hover:-translate-y-1 hover:shadow-md">
           <div className="row-span-4 m-2">
             <CarouselItemHolder data={itemData} />
           </div>
@@ -552,8 +552,8 @@ export function CarouselItem({ itemData }) {
                   )}
 
                   {activeStaffAction ? (
-                    <div className="mt-2 flex w-full flex-col gap-2 rounded-2xl bg-slate-50 p-3 border border-slate-200">
-                      <div className="text-xs font-bold text-sky-700 uppercase">
+                    <div className="mt-2 flex w-full flex-col gap-2 rounded-lg bg-slate-50 p-3 border border-slate-200">
+                      <div className="text-xs font-bold text-sky-900 uppercase">
                         Patron ID
                       </div>
 
@@ -565,7 +565,7 @@ export function CarouselItem({ itemData }) {
                           setPatronIdInput(event.target.value)
                         }
                         placeholder="ID"
-                        className="w-full rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-900 outline-none focus:ring-2 focus:ring-sky-500"
+                        className="w-full rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-900 outline-none focus:ring-2 focus:ring-sky-700"
                       />
 
                       <div className="flex gap-2">
@@ -573,7 +573,7 @@ export function CarouselItem({ itemData }) {
                           title={
                             isSubmitting
                               ? "..."
-                              : activeStaffAction == "checkout"
+                              : activeStaffAction === "checkout"
                                 ? "Loan"
                                 : "Hold"
                           }
@@ -609,7 +609,7 @@ export function CarouselItem({ itemData }) {
           </div>
         </div>
       ) : (
-        <div className="h-full grid grid-rows-4 rounded-3xl bg-white border border-slate-200 p-4 transition transform hover:-translate-y-1 hover:shadow-md">
+        <div className="h-full grid grid-rows-4 rounded-lg bg-white border border-slate-200 p-4 transition transform hover:-translate-y-1 hover:shadow-md">
           <div className="row-span-4 m-2">
             <CarouselItemHolder data={itemData} />
           </div>
@@ -643,8 +643,8 @@ export function CarouselItem({ itemData }) {
                   )}
 
                   {activeStaffAction ? (
-                    <div className="mt-2 flex w-full flex-col gap-2 rounded-2xl bg-slate-50 p-3 border border-slate-200">
-                      <div className="text-sm font-bold text-sky-700 uppercase">
+                    <div className="mt-2 flex w-full flex-col gap-2 rounded-lg bg-slate-50 p-3 border border-slate-200">
+                      <div className="text-sm font-bold text-sky-900 uppercase">
                         Patron ID
                       </div>
 
@@ -656,7 +656,7 @@ export function CarouselItem({ itemData }) {
                           setPatronIdInput(event.target.value)
                         }
                         placeholder="ID"
-                        className="w-full rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-900 outline-none focus:ring-2 focus:ring-sky-500"
+                        className="w-full rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-900 outline-none focus:ring-2 focus:ring-sky-700"
                       />
 
                       <div className="flex gap-2">
@@ -664,7 +664,7 @@ export function CarouselItem({ itemData }) {
                           title={
                             isSubmitting
                               ? "..."
-                              : activeStaffAction == "checkout"
+                              : activeStaffAction === "checkout"
                                 ? "Loan"
                                 : "Hold"
                           }
@@ -717,14 +717,14 @@ export function CarouselItemHolder({ data }) {
     <div className="flex flex-col items-center justify-center text-center">
       <ItemImage
         itemData={data}
-        className="h-36 w-26 rounded-2xl object-cover shadow-md mb-4 border border-slate-100"
+        className="h-36 w-26 rounded-md object-cover shadow-md mb-4 border border-slate-100"
       />
       <div className="text-lg font-bold text-slate-900 leading-tight">
         {data.title}
       </div>
 
       {creator ? (
-        <div className="text-sm font-bold text-sky-700 uppercase tracking-wide leading-tight">
+        <div className="text-sm font-bold text-sky-900 uppercase tracking-wide leading-tight">
           {creator}
         </div>
       ) : null}
@@ -764,13 +764,13 @@ export function ItemStaff({
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-4 rounded-3xl bg-white border border-slate-200 p-4 shadow-sm">
-        <div className="col-span-3 flex gap-6">
+      <div className="grid gap-4 rounded-lg bg-white border border-slate-200 p-4 shadow-sm lg:grid-cols-5">
+        <div className="flex flex-col gap-4 sm:flex-row sm:gap-6 lg:col-span-3">
           <ItemImage itemData={itemData} />
           <ItemHolder data={itemData} />
         </div>
 
-        <div className="col-span-1 grid grid-cols-2 items-center border-l border-slate-100 pl-6">
+        <div className="grid grid-cols-2 items-center border-t border-slate-100 pt-4 lg:col-span-1 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
           {itemData.status === "Available" ? (
             <div className="grid grid-rows-2 col-span-1 text-sm text-slate-600">
               <div>
@@ -842,7 +842,7 @@ export function ItemStaff({
           )}
         </div>
 
-        <div className="col-span-1 items-center justify-items-center text-center p-2 flex flex-col justify-center">
+        <div className="items-center justify-items-center text-center p-2 flex flex-col justify-center lg:col-span-1">
           {itemData.status === "On hold" ? (
             <div>
               <SecondaryButton
@@ -878,24 +878,24 @@ export function ItemLoan({ itemData }) {
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-4 rounded-3xl bg-white border border-slate-200 p-4 shadow-sm">
-        <div className="col-span-3 flex gap-6">
+      <div className="grid gap-4 rounded-lg bg-white border border-slate-200 p-4 shadow-sm lg:grid-cols-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:gap-6 lg:col-span-3">
           <ItemImage itemData={itemData} />
           <ItemHolder data={itemData} />
         </div>
 
         {itemData.overdue ? (
-          <div className="col-span-1 grid grid-rows-2 items-center text-center border-l border-slate-100 pl-6">
+          <div className="grid grid-rows-2 items-center text-center border-t border-slate-100 pt-4 lg:col-span-1 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
             <div className="text-sm font-medium text-slate-600">
               Due:{" "}
               <span className="font-bold text-slate-900">{formattedDate}</span>
             </div>
-            <div className="font-bold text-red-600 bg-red-60 px-3 py-1 rounded-full text-xs uppercase tracking-widest">
+            <div className="font-bold text-red-600 bg-red-50 px-3 py-1 rounded-full text-xs uppercase tracking-widest">
               Overdue
             </div>
           </div>
         ) : (
-          <div className="col-span-1 grid grid-rows-2 items-center text-center border-l border-slate-100 pl-6">
+          <div className="grid grid-rows-2 items-center text-center border-t border-slate-100 pt-4 lg:col-span-1 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
             <div className="text-sm font-medium text-slate-600">
               Due:{" "}
               <span className="font-bold text-slate-900">{formattedDate}</span>
@@ -910,14 +910,14 @@ export function ItemLoan({ itemData }) {
 export function ItemHold({ itemData, onCancel }) {
   return (
     <div className="w-full">
-      <div className="grid grid-cols-4 rounded-3xl bg-white border border-slate-200 p-4 shadow-sm">
-        <div className="col-span-3 flex gap-6">
+      <div className="grid gap-4 rounded-lg bg-white border border-slate-200 p-4 shadow-sm lg:grid-cols-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:gap-6 lg:col-span-3">
           <ItemImage itemData={itemData} />
           <ItemHolder data={itemData} />
         </div>
 
         {itemData.ready ? (
-          <div className="col-span-1 grid grid-rows-2 items-center text-center border-l border-slate-100 pl-6 gap-2">
+          <div className="grid grid-rows-2 items-center text-center border-t border-slate-100 pt-4 gap-2 lg:col-span-1 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
             <span className="text-xs font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full uppercase tracking-widest">
               Ready for pickup
             </span>
@@ -928,7 +928,7 @@ export function ItemHold({ itemData, onCancel }) {
             />
           </div>
         ) : (
-          <div className="col-span-1 grid grid-rows-2 items-center text-center border-l border-slate-100 pl-6 gap-2">
+          <div className="grid grid-rows-2 items-center text-center border-t border-slate-100 pt-4 gap-2 lg:col-span-1 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
             <span className="text-xs font-bold text-amber-600 bg-amber-50 px-3 py-1 rounded-full uppercase tracking-widest">
               In queue
             </span>
@@ -979,7 +979,7 @@ export function ItemHolder({ data }) {
         <div className="mt-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
           {metaLine}
           {data.category === "audiovisualmedia" && data.runtime
-            ? ` • ${data.runtime} MINS`
+            ? ` - ${data.runtime} MINS`
             : ""}
         </div>
 

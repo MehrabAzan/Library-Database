@@ -2,27 +2,26 @@ import React from "react";
 
 const AboutUs = () => {
   return (
-    <div className=" w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Header Section */}
-      <div className=" text-center mb-8">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">
+    <div className="w-full max-w-7xl mx-auto space-y-8">
+      <div className="rounded-lg border border-slate-200 bg-white p-8 shadow-sm">
+        <p className="text-xs font-bold uppercase tracking-wide text-amber-700">
+          About the Library
+        </p>
+        <h1 className="mt-2 text-4xl font-bold tracking-tight text-slate-950 md:text-5xl">
           About <span className="text-sky-900">Datahaven</span>
         </h1>
-        <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+        <p className="mt-4 max-w-3xl text-lg leading-relaxed text-slate-600">
           Datahaven is more than just a library. We are a haven for our
           community that provides knowledge and resources.
         </p>
       </div>
 
-      {/* Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8  ">
-        {/* Welcome Card */}
-        <div className=" bg-white border border-slate-200 p-8 rounded-3xl hover:border-slate-400 transition-all duration-500 flex flex-col shadow-md shadow-black/5">
-          <div className="flex justify-left gap-4 text-center items-center flex-wrap">
-            <div className="w-14 h-14 rounded-2xl bg-slate-400/10 border border-slate-400/20 flex items-center justify-center mb-2 -hover:scale-110 -hover:bg-slate-400/20 transition-all duration-500">
-              {/* User/Welcome Icon */}
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="flex flex-col rounded-lg border border-slate-200 bg-white p-8 shadow-sm transition-all duration-300 hover:border-sky-200 hover:shadow-md">
+          <div className="flex flex-wrap items-center gap-4 text-center">
+            <div className="mb-2 flex h-14 w-14 items-center justify-center rounded-lg border border-sky-100 bg-sky-50">
               <svg
-                className="w-7 h-7 text-slate-700"
+                className="w-7 h-7 text-sky-900"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -35,7 +34,7 @@ const AboutUs = () => {
                 />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 mb-2 tracking-wide -hover:text-slate-400 transition-colors">
+            <h2 className="text-2xl font-bold text-slate-950 mb-2 tracking-tight">
               Welcome
             </h2>
           </div>
@@ -44,13 +43,11 @@ const AboutUs = () => {
             simply dive into a good book, Datahaven is your space.
           </p>
         </div>
-        {/* Mission Card */}
-        <div className=" bg-white border border-slate-200 p-8 rounded-3xl hover:border-slate-400 transition-all duration-500 flex flex-col shadow-md shadow-black/5">
-          <div className="flex justify-left gap-4 text-center items-center flex-wrap">
-            <div className="w-14 h-14 rounded-2xl bg-slate-400/10 border border-slate-400/20 flex items-center justify-center mb-2 -hover:scale-110 -hover:bg-slate-400/20 transition-all duration-500">
-              {/* Target/Mission Icon */}
+        <div className="flex flex-col rounded-lg border border-slate-200 bg-white p-8 shadow-sm transition-all duration-300 hover:border-amber-200 hover:shadow-md">
+          <div className="flex flex-wrap items-center gap-4 text-center">
+            <div className="mb-2 flex h-14 w-14 items-center justify-center rounded-lg border border-amber-100 bg-amber-50">
               <svg
-                className="w-7 h-7 text-slate-700"
+                className="w-7 h-7 text-amber-700"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -63,7 +60,7 @@ const AboutUs = () => {
                 />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 mb-2 tracking-wide -hover:text-slate-400 transition-colors">
+            <h2 className="text-2xl font-bold text-slate-950 mb-2 tracking-tight">
               Our Mission
             </h2>
           </div>

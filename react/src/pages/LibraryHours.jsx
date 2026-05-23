@@ -18,12 +18,11 @@ const LibraryHours = () => {
   ];
 
   return (
-    <div className=" w-full max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-8 items-center">
-        {/* Left Column: Context & Contact Info */}
+    <div className="w-full max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-center">
         <div className="w-full space-y-6">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-200 shadow-sm mb-6">
+          <div className="rounded-lg border border-slate-200 bg-white p-8 shadow-sm">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-stone-50 px-3 py-1">
               <span className="relative flex h-2.5 w-2.5">
                 {isOpen && (
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -37,20 +36,22 @@ const LibraryHours = () => {
               </span>
             </div>
 
-            <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">
+            <p className="text-xs font-bold uppercase tracking-wide text-amber-700">
+              Hours & Location
+            </p>
+            <h1 className="mt-2 text-4xl font-bold tracking-tight text-slate-950 md:text-5xl">
               <span className="text-sky-900">Visiting?</span>
             </h1>
-            <p className="text-lg text-slate-600 leading-relaxed max-w-md">
+            <p className="mt-4 max-w-md text-lg leading-relaxed text-slate-600">
               Datahaven Library offers a quiet sanctuary for deep work,
               collaborative spaces for innovation, and an extensive physical
               collection.
             </p>
           </div>
 
-          <div className="space-y-6 pt-4 border-t border-sky-800/80 max-w-md">
-            {/* Location */}
+          <div className="max-w-md space-y-6 border-t border-slate-200 pt-6">
             <div className="flex items-start gap-4 group">
-              <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0 group-hover:bg-sky-50 group-hover:border-sky-200 transition-colors">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white transition-colors group-hover:border-sky-200 group-hover:bg-sky-50">
                 <svg
                   className="w-6 h-6 text-sky-600"
                   fill="none"
@@ -81,9 +82,8 @@ const LibraryHours = () => {
               </div>
             </div>
 
-            {/* Contact */}
             <div className="flex items-start gap-4 group">
-              <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0 group-hover:bg-sky-50 group-hover:border-sky-200 transition-colors">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white transition-colors group-hover:border-sky-200 group-hover:bg-sky-50">
                 <svg
                   className="w-6 h-6 text-sky-600"
                   fill="none"
@@ -112,11 +112,10 @@ const LibraryHours = () => {
           </div>
         </div>
 
-        {/* Right Column: The Hours Card */}
         <div className="w-full max-w-lg ml-auto">
-          <div className="bg-white border border-slate-100 p-8 rounded-3xl shadow-xl shadow-slate-200/50 relative z-10">
+          <div className="relative z-10 rounded-lg border border-slate-200 bg-white p-8 shadow-sm">
             <div className="flex items-center gap-4 mb-8 pb-6 border-b border-slate-100">
-              <div className="w-12 h-12 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg border border-sky-100 bg-sky-50">
                 <svg
                   className="w-6 h-6 text-sky-600"
                   fill="none"
@@ -140,7 +139,7 @@ const LibraryHours = () => {
               {schedule.map((item, index) => (
                 <div
                   key={index}
-                  className={`flex justify-between items-center p-4 rounded-2xl transition-all duration-300 ${
+                  className={`flex justify-between items-center p-4 rounded-lg transition-all duration-300 ${
                     item.closed
                       ? "bg-rose-50/50 border border-rose-100"
                       : "hover:bg-slate-50 border border-transparent hover:border-slate-200"

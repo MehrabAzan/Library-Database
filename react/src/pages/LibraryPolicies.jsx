@@ -83,30 +83,31 @@ const LibraryPolicies = () => {
   ];
 
   return (
-    <div className="w-full max-w-5xl mx-auto">
-      {/* Header Section */}
-      <div className="text-center m-4">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
+    <div className="w-full max-w-5xl mx-auto space-y-6">
+      <div className="rounded-lg border border-slate-200 bg-white p-8 shadow-sm">
+        <p className="text-xs font-bold uppercase tracking-wide text-amber-700">
+          Patron Guidelines
+        </p>
+        <h1 className="mt-2 text-4xl font-bold tracking-tight text-slate-950 md:text-5xl">
           Library <span className="text-sky-900">Policies</span>
         </h1>
-        <p className="text-lg text-slate-700 max-w-2xl mx-auto">
+        <p className="mt-4 max-w-2xl text-lg leading-relaxed text-slate-700">
           These guidelines help us maintain a safe, equitable, and welcoming
           environment for all patrons.
         </p>
       </div>
 
-      {/* Policies Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {policies.map((policy, index) => (
           <div
             key={index}
-            className="group bg-white border border-slate-100 p-8 rounded-3xl hover:bg-slate-50 hover:border-sky-200 transition-all duration-500 flex flex-col shadow-xl shadow-slate-200/50"
+            className="group flex flex-col rounded-lg border border-slate-200 bg-white p-8 shadow-sm transition-all duration-300 hover:border-sky-200 hover:shadow-md"
           >
-            <div className="flex justify-left gap-4 text-center items-center flex-wrap">
-              <div className="w-14 h-14 rounded-2xl bg-sky-50 border border-sky-100 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-sky-100 transition-all duration-500">
+            <div className="flex flex-wrap items-center gap-4 text-center">
+              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-lg border border-sky-100 bg-sky-50 transition-colors duration-300 group-hover:bg-sky-100">
                 {policy.icon}
               </div>
-              <h2 className="text-2xl mb-6 font-bold text-slate-900 tracking-wide group-hover:text-sky-700 transition-colors">
+              <h2 className="mb-6 text-2xl font-bold tracking-tight text-slate-950 transition-colors group-hover:text-sky-900">
                 {policy.title}
               </h2>
             </div>
@@ -117,9 +118,8 @@ const LibraryPolicies = () => {
         ))}
       </div>
 
-      {/* Footer Note */}
-      <div className="mt-6 text-center">
-        <p className="text-sm text-slate-600 bg-slate-50 inline-block px-6 py-3 rounded-full border border-slate-200 shadow-sm">
+      <div>
+        <p className="inline-block rounded-lg border border-slate-200 bg-white px-6 py-3 text-sm text-slate-600 shadow-sm">
           Have a question not covered here? Feel free to ask our staff at the
           front desk.
         </p>
