@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter,
   Routes,
@@ -54,33 +54,34 @@ function AccountRouter({ patronPage, staffPage }) {
   return user.user_type === "patron" ? patronPage : staffPage;
 }
 
-function NavSection({ title, links }) {
-  if (!links.length) return null;
-
+function MenuLink({ to, label, description, onNavigate }) {
   return (
-    <div className="px-4 py-4">
-      <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
-        {title}
-      </p>
-
-      <div className="space-y-1">
-        {links.map(({ to, label }) => (
-          <NavLink
-            key={to}
-            to={to}
-            className={({ isActive }) =>
-              `block w-full rounded-md px-3 py-2.5 text-sm font-semibold transition-colors ${
-                isActive
-                  ? "bg-sky-900 text-white shadow-sm"
-                  : "text-slate-700 hover:bg-white hover:text-slate-950"
-              }`
-            }
-          >
-            {label}
-          </NavLink>
-        ))}
-      </div>
-    </div>
+    <NavLink
+      to={to}
+      onClick={onNavigate}
+      className={({ isActive }) =>
+        `block rounded-md border px-3 py-3 text-sm transition-colors ${
+          isActive
+            ? "border-sky-900 bg-sky-900 text-white shadow-sm"
+            : "border-transparent text-slate-700 hover:border-slate-200 hover:bg-white hover:text-slate-950"
+        }`
+      }
+    >
+      {({ isActive }) => (
+        <>
+          <span className="block font-bold">{label}</span>
+          {description ? (
+            <span
+              className={`mt-0.5 block text-xs leading-5 ${
+                isActive ? "text-sky-100" : "text-slate-500"
+              }`}
+            >
+              {description}
+            </span>
+          ) : null}
+        </>
+      )}
+    </NavLink>
   );
 }
 
@@ -107,16 +108,71 @@ function App() {
   const roleCode = Number(user?.role);
   const version = "1.2.0";
 
-  // State to manage sidebar visibility
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() =>
+    typeof window === "undefined"
+      ? true
+      : window.matchMedia("(min-width: 1024px)").matches,
+  );
 
-  const generalLinks = [
-    { to: "/", label: "Home" },
-    { to: "/search", label: "Search" },
-    { to: "/hours", label: "Hours" },
-    { to: "/policies", label: "Policies" },
-    { to: "/about", label: "About" },
-    ...(user ? [{ to: "/account", label: "Account" }] : []),
+  useEffect(() => {
+    if (typeof window === "undefined") return undefined;
+
+    const desktopQuery = window.matchMedia("(min-width: 1024px)");
+    const syncSidebarToViewport = (event) => {
+      setIsSidebarOpen(event.matches);
+    };
+
+    setIsSidebarOpen(desktopQuery.matches);
+    desktopQuery.addEventListener("change", syncSidebarToViewport);
+
+    return () => {
+      desktopQuery.removeEventListener("change", syncSidebarToViewport);
+    };
+  }, []);
+
+  const closeSidebarOnSmallScreens = () => {
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(max-width: 1023px)").matches
+    ) {
+      setIsSidebarOpen(false);
+    }
+  };
+
+  const baseNavigationLinks = [
+    { to: "/", label: "Home", description: "Library overview and highlights" },
+    {
+      to: "/search",
+      label: "Catalog",
+      description: "Find books, media, periodicals, and equipment",
+    },
+    ...(user
+      ? [
+          {
+            to: "/account",
+            label: "My Account",
+            description:
+              userType === "staff"
+                ? "Profile and settings"
+                : "Loans, holds, fines, and settings",
+          },
+        ]
+      : []),
+    {
+      to: "/hours",
+      label: "Hours & Location",
+      description: "Plan a visit or contact the branch",
+    },
+    {
+      to: "/policies",
+      label: "Borrowing Policies",
+      description: "Review circulation rules and services",
+    },
+    {
+      to: "/about",
+      label: "About Datahaven",
+      description: "Learn about the library",
+    },
   ];
 
   const publicLinks = [
@@ -131,22 +187,60 @@ function App() {
     userType === "staff" && (roleCode === 1 || roleCode === 2)
       ? [
           // { to: "/itementry", label: "Item Entry" },
-          { to: "/itementry/manage", label: "Item Management" },
-          { to: "/staffloans", label: "Loans" },
-          { to: "/holds", label: "Holds" },
-          { to: "/stafffines", label: "Fines" },
-          { to: "/lost", label: "Lost Items" },
+          {
+            to: "/itementry/manage",
+            label: "Manage Items",
+            description: "Add, update, and organize catalog records",
+          },
+          {
+            to: "/staffloans",
+            label: "Checkout & Returns",
+            description: "Process active circulation",
+          },
+          {
+            to: "/holds",
+            label: "Hold Requests",
+            description: "Review and fulfill patron holds",
+          },
+          {
+            to: "/stafffines",
+            label: "Fine Payments",
+            description: "Look up and resolve fines",
+          },
+          {
+            to: "/lost",
+            label: "Lost Item Records",
+            description: "Track missing or replacement items",
+          },
         ]
       : [];
 
   const adminLinks =
     userType === "staff" && roleCode === 2
       ? [
-          { to: "/changerole", label: "Manage Users" },
-          { to: "/report", label: "Reports" },
-          { to: "/staffregistration", label: "Staff Signup" },
+          {
+            to: "/report",
+            label: "Reports",
+            description: "Open circulation and account reports",
+          },
+          {
+            to: "/changerole",
+            label: "User Roles",
+            description: "Update staff and patron access",
+          },
+          {
+            to: "/staffregistration",
+            label: "Register Staff",
+            description: "Create a new staff account",
+          },
         ]
       : [];
+
+  const navigationLinks = [
+    ...baseNavigationLinks,
+    ...staffLinks,
+    ...adminLinks,
+  ];
 
   return (
     <MessageProvider>
@@ -174,8 +268,14 @@ function App() {
                 <div className="flex min-w-0 items-center gap-3">
                   <button
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    className="rounded-md p-2 text-slate-600 transition-colors hover:bg-stone-100 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2"
-                    aria-label="Toggle library menu"
+                    className="inline-flex items-center gap-2 rounded-md border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-stone-100 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2"
+                    aria-controls="library-navigation"
+                    aria-expanded={isSidebarOpen}
+                    aria-label={
+                      isSidebarOpen
+                        ? "Close library navigation"
+                        : "Open library navigation"
+                    }
                   >
                     <svg
                       className="h-6 w-6"
@@ -190,6 +290,9 @@ function App() {
                         d="M4 6h16M4 12h16M4 18h16"
                       />
                     </svg>
+                    <span className="hidden sm:inline">
+                      {isSidebarOpen ? "Hide menu" : "Menu"}
+                    </span>
                   </button>
 
                   <NavLink
@@ -250,21 +353,53 @@ function App() {
           </header>
 
           <div className="flex min-h-0 flex-1 overflow-hidden">
+            {isSidebarOpen ? (
+              <button
+                type="button"
+                className="fixed inset-0 z-30 bg-slate-950/40 lg:hidden"
+                aria-label="Close navigation"
+                onClick={() => setIsSidebarOpen(false)}
+              />
+            ) : null}
+
             <aside
-              className={`z-0 flex-shrink-0 overflow-hidden border-r border-slate-200 bg-stone-100 transition-[width] duration-200 ease-in-out ${
-                isSidebarOpen ? "w-72" : "w-0"
+              id="library-navigation"
+              className={`fixed inset-y-0 left-0 z-40 w-80 max-w-[86vw] flex-shrink-0 overflow-hidden border-r border-slate-200 bg-stone-100 shadow-xl transition-transform duration-200 ease-in-out lg:static lg:z-0 lg:max-w-none lg:shadow-none lg:transition-[width] ${
+                isSidebarOpen
+                  ? "translate-x-0 lg:w-80"
+                  : "-translate-x-full lg:w-0 lg:translate-x-0"
               }`}
             >
-              <div className="h-full overflow-y-auto py-3">
-                <div className="px-7 py-3">
-                  <p className="text-sm font-bold text-slate-950">
-                    My Library
-                  </p>
-                  <p className="text-xs text-slate-600">Patron & Staff Services</p>
+              <div className="h-full overflow-y-auto">
+                <div className="flex items-start justify-between gap-4 border-b border-slate-200 bg-white px-6 py-5">
+                  <div>
+                    <p className="text-sm font-bold text-slate-950">
+                      Library Menu
+                    </p>
+                    <p className="mt-1 text-xs leading-5 text-slate-600">
+                      One path through catalog, account, visits, and operations.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsSidebarOpen(false)}
+                    className="rounded-md border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-600 transition-colors hover:bg-stone-100 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2 lg:hidden"
+                  >
+                    Close
+                  </button>
                 </div>
-                <NavSection title="General" links={generalLinks} />
-                <NavSection title="Staff" links={staffLinks} />
-                <NavSection title="Admin" links={adminLinks} />
+                <nav
+                  className="space-y-1 px-4 py-4"
+                  aria-label="Library navigation"
+                >
+                  {navigationLinks.map((link) => (
+                    <MenuLink
+                      key={link.to}
+                      {...link}
+                      onNavigate={closeSidebarOnSmallScreens}
+                    />
+                  ))}
+                </nav>
               </div>
             </aside>
 
