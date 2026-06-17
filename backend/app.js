@@ -47,6 +47,8 @@ function CreateExpressApp() {
 }
 
 const app = CreateExpressApp();
+app.set("trust proxy", Number(process.env.TRUST_PROXY_HOPS) || 1);
+
 const port = Number(process.env.PORT) || 3000;
 const sessionMaxAgeSeconds = Math.max(
   Number(process.env.SESSION_MAX_AGE_SECONDS) || 60 * 60 * 12,
@@ -57,32 +59,148 @@ const passwordResetMaxAgeSeconds = Math.max(
   60 * 5
 );
 
+const weakSessionSecrets = new Set([
+  "team8",
+  "library-dev-session-secret-change-me",
+]);
+
 const sessionSecret =
   process.env.SESSION_SECRET?.trim() ||
   (process.env.NODE_ENV === "production"
-    ? "team8"
+    ? ""
     : "library-dev-session-secret-change-me");
+
+if (
+  process.env.NODE_ENV === "production" &&
+  (!sessionSecret || weakSessionSecrets.has(sessionSecret))
+) {
+  console.error(
+    "Set SESSION_SECRET to a strong random value in production before starting the server."
+  );
+  process.exit(1);
+}
+
 const passwordResetSecret =
   process.env.PASSWORD_RESET_SECRET?.trim() || sessionSecret;
+
+function ParseAllowedOrigins() {
+  const configuredOrigins = [
+    process.env.APP_ORIGIN,
+    process.env.FRONTEND_ORIGIN,
+    process.env.CORS_ALLOWED_ORIGINS,
+  ]
+    .flatMap((value) => String(value ?? "").split(","))
+    .map((value) => value.trim().replace(/\/+$/, ""))
+    .filter((value) => /^https?:\/\//i.test(value));
+
+  if (process.env.NODE_ENV !== "production") {
+    configuredOrigins.push(
+      "http://localhost:5173",
+      "http://127.0.0.1:5173",
+      "http://localhost:3000",
+      "http://127.0.0.1:3000"
+    );
+  }
+
+  return [...new Set(configuredOrigins)];
+}
+
+const allowedOrigins = ParseAllowedOrigins();
 const defaultAppOrigin =
+  allowedOrigins[0] ||
   process.env.APP_ORIGIN?.trim() ||
   process.env.FRONTEND_ORIGIN?.trim() ||
   "http://localhost:5173";
 
+const rateLimitBuckets = new Map();
+
+function IsAllowedOrigin(origin) {
+  const normalizedOrigin = String(origin ?? "")
+    .trim()
+    .replace(/\/+$/, "");
+
+  return allowedOrigins.includes(normalizedOrigin);
+}
+
+function ApplySecurityHeaders(req, res) {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.setHeader(
+    "Permissions-Policy",
+    "camera=(), microphone=(), geolocation=()"
+  );
+  res.setHeader("Cross-Origin-Resource-Policy", "same-site");
+
+  const isSecureRequest =
+    req.secure ||
+    String(req.get("x-forwarded-proto") ?? "").split(",")[0].trim() ===
+      "https";
+
+  if (isSecureRequest) {
+    res.setHeader(
+      "Strict-Transport-Security",
+      "max-age=31536000; includeSubDomains"
+    );
+  }
+}
+
+function ConsumeRateLimit(
+  key,
+  { windowMs = 15 * 60 * 1000, maxAttempts = 20 } = {}
+) {
+  const now = Date.now();
+  let bucket = rateLimitBuckets.get(key);
+
+  if (!bucket || now >= bucket.resetAt) {
+    bucket = { count: 0, resetAt: now + windowMs };
+  }
+
+  bucket.count += 1;
+  rateLimitBuckets.set(key, bucket);
+
+  return bucket.count <= maxAttempts;
+}
+
+function GetClientIp(req) {
+  return String(req.ip ?? req.socket?.remoteAddress ?? "unknown");
+}
+
+function GetRateLimitKey(req, scope) {
+  return `${scope}:${GetClientIp(req)}`;
+}
+
+function SendRateLimited(res) {
+  res.status(429).json({
+    error: "Too many requests. Please try again later.",
+  });
+}
+
 app.use((req, res, next) => {
+  ApplySecurityHeaders(req, res);
+
+  const origin = String(req.get("origin") ?? "").trim();
+  const hasOrigin = origin !== "";
   const requestedHeaders = String(
     req.headers["access-control-request-headers"] ?? ""
   ).trim();
 
-  res.set("Access-Control-Allow-Origin", "*");
-  res.set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-  res.set(
+  if (hasOrigin && IsAllowedOrigin(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  res.setHeader(
     "Access-Control-Allow-Headers",
     requestedHeaders || "Content-Type, Authorization"
   );
-  res.set("Vary", "Origin, Access-Control-Request-Headers");
+  res.setHeader("Vary", "Origin, Access-Control-Request-Headers");
 
   if (req.method === "OPTIONS") {
+    if (hasOrigin && !IsAllowedOrigin(origin)) {
+      return res.sendStatus(403);
+    }
+
     return res.sendStatus(204);
   }
 
@@ -101,10 +219,12 @@ app.use((req, res, next) => {
   next();
 });
 
-console.log("DB_HOST =", process.env.DB_HOST);
-console.log("DB_PORT =", process.env.DB_PORT);
-console.log("DB_USER =", process.env.DB_USER);
-console.log("DB_NAME =", process.env.DB_NAME);
+if (process.env.NODE_ENV !== "production") {
+  console.log("DB_HOST =", process.env.DB_HOST);
+  console.log("DB_PORT =", process.env.DB_PORT);
+  console.log("DB_USER =", process.env.DB_USER);
+  console.log("DB_NAME =", process.env.DB_NAME);
+}
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
@@ -2915,6 +3035,7 @@ app.get("/uploads/:filename", async (req, res) => {
     const fileContents = await readFile(filePath);
 
     res.setHeader("Content-Type", GetUploadedImageContentType(filename));
+    res.setHeader("X-Content-Type-Options", "nosniff");
     res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
     return res.send(fileContents);
   } catch (error) {
@@ -3416,7 +3537,22 @@ app.post(
 // Login endpoint
 app.post(["/login", "/api/login"], async (req, res) => {
   try {
-    const { email, password } = req.body;
+    if (
+      !ConsumeRateLimit(GetRateLimitKey(req, "login"), {
+        windowMs: 15 * 60 * 1000,
+        maxAttempts: 10,
+      })
+    ) {
+      return SendRateLimited(res);
+    }
+
+    const email = ValidateEmailAddress(req.body?.email);
+    const password = String(req.body?.password ?? "");
+    const invalidCredentialsMessage = "Invalid email or password.";
+
+    if (!email || !password) {
+      return res.status(401).json({ error: invalidCredentialsMessage });
+    }
 
     // 1. try to find patrons first
     const [patronUsers] = await pool.query(
@@ -3434,7 +3570,7 @@ app.post(["/login", "/api/login"], async (req, res) => {
       const passwordMatches = await VerifyPassword(password, user.password_hash);
 
       if (!passwordMatches) {
-        return res.status(401).json({ error: "Invalid password" });
+        return res.status(401).json({ error: invalidCredentialsMessage });
       }
 
       await UpgradeLegacyPasswordIfNeeded({
@@ -3480,7 +3616,7 @@ app.post(["/login", "/api/login"], async (req, res) => {
       const passwordMatches = await VerifyPassword(password, user.password_hash);
 
       if (!passwordMatches) {
-        return res.status(401).json({ error: "Invalid password" });
+        return res.status(401).json({ error: invalidCredentialsMessage });
       }
 
       await UpgradeLegacyPasswordIfNeeded({
@@ -3510,7 +3646,7 @@ app.post(["/login", "/api/login"], async (req, res) => {
       });
     }
 
-    return res.status(401).json({ error: "User not found" });
+    return res.status(401).json({ error: invalidCredentialsMessage });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({
@@ -3523,10 +3659,29 @@ app.post(["/login", "/api/login"], async (req, res) => {
 // Registration endpoint
 app.post(["/register", "/api/register"], async (req, res) => {
   try {
-    const { firstname, lastname, birthday, email, password } = req.body;
+    if (
+      !ConsumeRateLimit(GetRateLimitKey(req, "register"), {
+        windowMs: 60 * 60 * 1000,
+        maxAttempts: 20,
+      })
+    ) {
+      return SendRateLimited(res);
+    }
+
+    const firstname = String(req.body?.firstname ?? "").trim();
+    const lastname = String(req.body?.lastname ?? "").trim();
+    const birthday = req.body?.birthday;
+    const email = ValidateEmailAddress(req.body?.email);
+    const password = String(req.body?.password ?? "");
 
     if (!firstname || !lastname || !email || !password) {
       return res.status(400).json({ error: "Missing required fields." });
+    }
+
+    const passwordError = ValidatePasswordStrength(password);
+
+    if (passwordError) {
+      return res.status(400).json({ error: passwordError });
     }
 
     const [existingPatrons] = await pool.query(
@@ -3561,10 +3716,19 @@ app.post(["/register", "/api/register"], async (req, res) => {
 
 app.post(["/forgot-password", "/api/forgot-password"], async (req, res) => {
   try {
-    const email = String(req.body?.email ?? "").trim();
+    const email = ValidateEmailAddress(req.body?.email);
 
     if (!email) {
       return res.status(400).json({ error: "Email is required." });
+    }
+
+    if (
+      !ConsumeRateLimit(`${GetRateLimitKey(req, "forgot-password")}:${email}`, {
+        windowMs: 60 * 60 * 1000,
+        maxAttempts: 5,
+      })
+    ) {
+      return SendRateLimited(res);
     }
 
     const responsePayload = {
@@ -3602,6 +3766,15 @@ app.post(["/forgot-password", "/api/forgot-password"], async (req, res) => {
 
 app.post(["/reset-password", "/api/reset-password"], async (req, res) => {
   try {
+    if (
+      !ConsumeRateLimit(GetRateLimitKey(req, "reset-password"), {
+        windowMs: 60 * 60 * 1000,
+        maxAttempts: 10,
+      })
+    ) {
+      return SendRateLimited(res);
+    }
+
     const token = String(req.body?.token ?? "").trim();
     const newPassword = String(req.body?.newPassword ?? "");
     const confirmPassword = String(req.body?.confirmPassword ?? "");
@@ -3692,16 +3865,20 @@ app.post(["/reset-password", "/api/reset-password"], async (req, res) => {
 
 app.post(["/staff/register", "/api/staff/register"], async (req, res) => {
   try {
-    const {
-      firstname,
-      lastname,
-      birthday,
-      email,
-      password,
-      phone_number,
-      address,
-      staff_role_code,
-    } = req.body;
+    const user = await RequireStaffUser(req, res, { adminOnly: true });
+
+    if (!user) {
+      return;
+    }
+
+    const firstname = String(req.body?.firstname ?? "").trim();
+    const lastname = String(req.body?.lastname ?? "").trim();
+    const birthday = req.body?.birthday;
+    const email = ValidateEmailAddress(req.body?.email);
+    const password = String(req.body?.password ?? "");
+    const phoneNumber = req.body?.phone_number;
+    const address = String(req.body?.address ?? "").trim();
+    const staffRoleCode = ParsePositiveInteger(req.body?.staff_role_code);
 
     if (
       !firstname ||
@@ -3710,9 +3887,28 @@ app.post(["/staff/register", "/api/staff/register"], async (req, res) => {
       !password ||
       !birthday ||
       !address ||
-      !staff_role_code
+      !staffRoleCode
     ) {
       return res.status(400).json({ error: "Missing required fields." });
+    }
+
+    const passwordError = ValidatePasswordStrength(password);
+
+    if (passwordError) {
+      return res.status(400).json({ error: passwordError });
+    }
+
+    const [roleRows] = await pool.query(
+      `
+      SELECT staff_role_code AS roleCode
+      FROM staff_roles
+      WHERE staff_role_code = ?
+      `,
+      [staffRoleCode]
+    );
+
+    if (roleRows.length === 0) {
+      return res.status(400).json({ error: "Select a valid staff role." });
     }
 
     // check email
@@ -3746,12 +3942,12 @@ app.post(["/staff/register", "/api/staff/register"], async (req, res) => {
         (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       [
-        staff_role_code,
+        staffRoleCode,
         firstname,
         lastname,
         birthday,
         email,
-        phone_number || null,
+        phoneNumber || null,
         address,
         passwordHash,
         1,
@@ -5032,6 +5228,34 @@ app.post(["/fines/:fineId/waive", "/api/fines/:fineId/waive"], async (req, res) 
 
 function SafeText(value) {
   return value == null ? "" : String(value);
+}
+
+function ValidateEmailAddress(email) {
+  const normalizedEmail = String(email ?? "").trim();
+
+  if (!normalizedEmail || normalizedEmail.length > 254) {
+    return null;
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+    return null;
+  }
+
+  return normalizedEmail.toLowerCase();
+}
+
+function ValidatePasswordStrength(password) {
+  const normalizedPassword = String(password ?? "");
+
+  if (normalizedPassword.length < 8) {
+    return "Password must be at least 8 characters long.";
+  }
+
+  if (normalizedPassword.length > 128) {
+    return "Password must be 128 characters or fewer.";
+  }
+
+  return null;
 }
 
 
