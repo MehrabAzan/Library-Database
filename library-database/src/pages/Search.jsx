@@ -44,30 +44,23 @@ export default function Search() {
   }
 
   return (
-    <section className="space-y-6">
-      <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-        <p className="text-xs font-bold uppercase tracking-wide text-amber-700">
-          Datahaven Catalog
-        </p>
-        <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
-          Search the collection
-        </h1>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
-          Find books, media, periodicals, and equipment available through
-          Datahaven Libraries.
+    <section className="space-y-8">
+      <div>
+        <p className="dh-kicker">Datahaven Catalog</p>
+        <h1 className="dh-section-title mt-2">Search the collection</h1>
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-ink/65">
+          Find books, media, periodicals, and equipment available at Datahaven
+          Libraries.
         </p>
       </div>
 
       <form
         onSubmit={HandleSubmit}
-        className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
+        className="border-t border-ink/10 bg-paper/70 px-4 py-5 sm:px-6"
       >
         <div className="grid grid-cols-1 items-end gap-5 md:grid-cols-12">
           <div className="md:col-span-5">
-            <label
-              htmlFor="q"
-              className="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-600"
-            >
+            <label htmlFor="q" className="dh-label">
               Search Term
             </label>
             <input
@@ -75,22 +68,19 @@ export default function Search() {
               id="q"
               name="q"
               placeholder="Title, author, keyword, or subject"
-              className="block w-full rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition-all focus:border-sky-700 focus:ring-2 focus:ring-sky-700/20"
+              className="dh-input"
             />
           </div>
 
           <div className="md:col-span-3">
-            <label
-              htmlFor="category"
-              className="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-600"
-            >
+            <label htmlFor="category" className="dh-label">
               Collection
             </label>
             <select
               required
               id="category"
               name="category"
-              className="block w-full cursor-pointer appearance-none rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition-all focus:border-sky-700 focus:ring-2 focus:ring-sky-700/20"
+              className="dh-input cursor-pointer appearance-none"
             >
               <option value="book">Books</option>
               <option value="audiovisualmedia">Audiovisual Media</option>
@@ -108,9 +98,9 @@ export default function Search() {
                 type="checkbox"
                 id="availableOnly"
                 name="availableOnly"
-                className="h-5 w-5 cursor-pointer rounded border-slate-300 text-sky-900 focus:ring-sky-700"
+                className="h-5 w-5 cursor-pointer rounded border-ink/25 text-ink focus:ring-ink-soft"
               />
-              <span className="text-xs font-bold uppercase tracking-wide text-slate-700 transition-colors group-hover:text-sky-900">
+              <span className="text-xs font-semibold uppercase tracking-wide text-ink/70 transition-colors group-hover:text-ink">
                 Available Only
               </span>
             </label>
@@ -122,27 +112,30 @@ export default function Search() {
         </div>
       </form>
 
-      <div
-        id="results"
-        className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
-      >
+      <div id="results" className="border-t border-ink/10 pt-6">
         {loading && (
           <div className="flex items-center justify-center py-8">
-            <p className="animate-pulse font-medium text-slate-500">
+            <p className="animate-pulse text-sm font-medium text-ink/60">
               Searching the catalog...
             </p>
           </div>
         )}
 
         {!loading && error && (
-          <div className="rounded-md border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-700">
+          <div className="border border-danger/25 bg-danger/10 p-4 text-sm font-medium text-danger">
             {error}
           </div>
         )}
 
+        {!loading && !error && !hasSearched && (
+          <p className="py-6 text-center text-sm font-medium text-ink/50">
+            Enter a search term to browse the catalog.
+          </p>
+        )}
+
         {!loading && !error && hasSearched && results.length === 0 && (
           <div className="py-8 text-center">
-            <p className="text-base font-medium text-slate-500">
+            <p className="text-sm font-medium text-ink/55">
               No items match your search criteria.
             </p>
           </div>

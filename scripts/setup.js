@@ -33,7 +33,7 @@ try {
   console.log("Installing backend dependencies...");
   await RunInstall("backend");
   console.log("Installing frontend dependencies...");
-  await RunInstall("react");
+  await RunInstall("library-database");
 
   const envPath = path.resolve(repoRoot, "backend/.env");
   if (!fs.existsSync(envPath)) {

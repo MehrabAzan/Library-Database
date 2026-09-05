@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   BrowserRouter,
   Routes,
@@ -26,7 +26,6 @@ import Registration from "./pages/Registration.jsx";
 import Report from "./pages/Report.jsx";
 import Search from "./pages/Search.jsx";
 import StaffRegistration from "./pages/StaffRegistration.jsx";
-import TestPage from "./pages/TestPage.jsx";
 import Logout from "./pages/Logout.jsx";
 import PopularityReport from "./pages/PopularityReport.jsx";
 import PatronSummaryReport from "./pages/PatronSummaryReport.jsx";
@@ -60,20 +59,16 @@ function MenuLink({ to, label, description, onNavigate }) {
       to={to}
       onClick={onNavigate}
       className={({ isActive }) =>
-        `block rounded-md border px-3 py-3 text-sm transition-colors ${
-          isActive
-            ? "border-sky-900 bg-sky-900 text-white shadow-sm"
-            : "border-transparent text-slate-700 hover:border-slate-200 hover:bg-white hover:text-slate-950"
-        }`
+        `dh-menu-link ${isActive ? "dh-menu-link-active" : "dh-menu-link-idle"}`
       }
     >
       {({ isActive }) => (
         <>
-          <span className="block font-bold">{label}</span>
+          <span className="block font-semibold">{label}</span>
           {description ? (
             <span
               className={`mt-0.5 block text-xs leading-5 ${
-                isActive ? "text-sky-100" : "text-slate-500"
+                isActive ? "text-paper/75" : "text-ink/55"
               }`}
             >
               {description}
@@ -90,11 +85,7 @@ function PublicNavLink({ to, label }) {
     <NavLink
       to={to}
       className={({ isActive }) =>
-        `rounded-md px-3 py-2 text-sm font-semibold transition-colors ${
-          isActive
-            ? "bg-sky-50 text-sky-900"
-            : "text-slate-700 hover:bg-stone-100 hover:text-slate-950"
-        }`
+        `dh-nav-link ${isActive ? "dh-nav-link-active" : ""}`
       }
     >
       {label}
@@ -108,35 +99,10 @@ function App() {
   const roleCode = Number(user?.role);
   const version = "1.2.0";
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(() =>
-    typeof window === "undefined"
-      ? true
-      : window.matchMedia("(min-width: 1024px)").matches,
-  );
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  useEffect(() => {
-    if (typeof window === "undefined") return undefined;
-
-    const desktopQuery = window.matchMedia("(min-width: 1024px)");
-    const syncSidebarToViewport = (event) => {
-      setIsSidebarOpen(event.matches);
-    };
-
-    setIsSidebarOpen(desktopQuery.matches);
-    desktopQuery.addEventListener("change", syncSidebarToViewport);
-
-    return () => {
-      desktopQuery.removeEventListener("change", syncSidebarToViewport);
-    };
-  }, []);
-
-  const closeSidebarOnSmallScreens = () => {
-    if (
-      typeof window !== "undefined" &&
-      window.matchMedia("(max-width: 1023px)").matches
-    ) {
-      setIsSidebarOpen(false);
-    }
+  const closeSidebarAfterNavigate = () => {
+    setIsSidebarOpen(false);
   };
 
   const baseNavigationLinks = [
@@ -165,12 +131,12 @@ function App() {
     },
     {
       to: "/policies",
-      label: "Borrowing Policies",
+      label: "Library Policies",
       description: "Review circulation rules and services",
     },
     {
       to: "/about",
-      label: "About Datahaven",
+      label: "About",
       description: "Learn about the library",
     },
   ];
@@ -186,7 +152,6 @@ function App() {
   const staffLinks =
     userType === "staff" && (roleCode === 1 || roleCode === 2)
       ? [
-          // { to: "/itementry", label: "Item Entry" },
           {
             to: "/itementry/manage",
             label: "Manage Items",
@@ -245,18 +210,18 @@ function App() {
   return (
     <MessageProvider>
       <BrowserRouter>
-        <div className="flex min-h-screen flex-col bg-stone-50 font-sans text-slate-900">
-          <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
-            <div className="hidden bg-slate-950 px-4 py-2 text-xs font-medium text-stone-100 sm:block sm:px-6">
+        <div className="dh-shell">
+          <header className="dh-header">
+            <div className="dh-utility-bar px-4 py-2 sm:px-6">
               <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-4">
-                <div className="flex items-center gap-6">
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
                   <span>100 Innovation Drive, Tech District</span>
-                  <span>Mon-Thu 8 AM-9 PM</span>
+                  <span>Mon–Thu 8 AM–9 PM</span>
                   <span>(555) 019-8372</span>
                 </div>
                 <NavLink
                   to="/hours"
-                  className="font-semibold text-amber-200 transition-colors hover:text-white"
+                  className="font-semibold text-brass-soft transition-colors hover:text-paper"
                 >
                   View today&apos;s hours
                 </NavLink>
@@ -264,11 +229,11 @@ function App() {
             </div>
 
             <div className="px-4 sm:px-6">
-              <div className="mx-auto flex h-20 w-full max-w-[1440px] items-center justify-between gap-4">
+              <div className="mx-auto flex h-[4.75rem] w-full max-w-[1440px] items-center justify-between gap-4">
                 <div className="flex min-w-0 items-center gap-3">
                   <button
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    className="inline-flex items-center gap-2 rounded-md border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-stone-100 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2"
+                    className="dh-btn dh-btn-secondary !px-3 !py-2"
                     aria-controls="library-navigation"
                     aria-expanded={isSidebarOpen}
                     aria-label={
@@ -278,7 +243,7 @@ function App() {
                     }
                   >
                     <svg
-                      className="h-6 w-6"
+                      className="h-5 w-5"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -297,18 +262,18 @@ function App() {
 
                   <NavLink
                     to="/"
-                    className="flex min-w-0 items-center gap-3 transition-opacity hover:opacity-85"
+                    className="flex min-w-0 items-center gap-3 transition-opacity hover:opacity-90"
                   >
                     <img
                       src="/Datahaven.jpg"
-                      className="h-12 w-12 rounded-md border border-slate-200 bg-white object-cover"
+                      className="dh-brand-mark"
                       alt="Datahaven Libraries logo"
                     />
                     <div className="min-w-0">
-                      <h1 className="truncate text-lg font-bold tracking-tight text-slate-950 sm:text-xl">
+                      <p className="font-display truncate text-xl font-semibold tracking-tight text-ink-deep sm:text-2xl">
                         Datahaven Libraries
-                      </h1>
-                      <p className="hidden text-xs font-semibold uppercase tracking-wide text-slate-500 md:block">
+                      </p>
+                      <p className="hidden text-xs font-medium tracking-wide text-ink/55 md:block">
                         Catalog, services, and patron access
                       </p>
                     </div>
@@ -316,7 +281,7 @@ function App() {
                 </div>
 
                 <nav
-                  className="hidden items-center gap-1 lg:flex"
+                  className="hidden items-center gap-0.5 lg:flex"
                   aria-label="Primary navigation"
                 >
                   {publicLinks.map((link) => (
@@ -325,25 +290,19 @@ function App() {
                 </nav>
 
                 {!user ? (
-                  <NavLink
-                    to="/login"
-                    className="shrink-0 rounded-md bg-sky-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2"
-                  >
+                  <NavLink to="/login" className="dh-btn dh-btn-primary shrink-0">
                     Log in
                   </NavLink>
                 ) : (
                   <div className="flex shrink-0 items-center gap-3">
                     {userType === "staff" ? null : <NotificationBell />}
-                    <span className="hidden text-sm text-slate-600 sm:inline">
+                    <span className="hidden text-sm text-ink/65 sm:inline">
                       Hello{" "}
-                      <span className="font-semibold text-slate-950">
+                      <span className="font-semibold text-ink">
                         {user.first_name || "User"}
                       </span>
                     </span>
-                    <NavLink
-                      to="/logout"
-                      className="rounded-md border border-slate-300 px-3 py-1.5 text-sm font-semibold text-slate-700 transition-colors hover:border-slate-400 hover:bg-stone-100"
-                    >
+                    <NavLink to="/logout" className="dh-btn dh-btn-secondary !py-1.5">
                       Logout
                     </NavLink>
                   </div>
@@ -356,7 +315,7 @@ function App() {
             {isSidebarOpen ? (
               <button
                 type="button"
-                className="fixed inset-0 z-30 bg-slate-950/40 lg:hidden"
+                className="fixed inset-0 z-30 bg-ink-deep/40 lg:hidden"
                 aria-label="Close navigation"
                 onClick={() => setIsSidebarOpen(false)}
               />
@@ -364,26 +323,26 @@ function App() {
 
             <aside
               id="library-navigation"
-              className={`fixed inset-y-0 left-0 z-40 w-80 max-w-[86vw] flex-shrink-0 overflow-hidden border-r border-slate-200 bg-stone-100 shadow-xl transition-transform duration-200 ease-in-out lg:static lg:z-0 lg:max-w-none lg:shadow-none lg:transition-[width] ${
+              className={`fixed inset-y-0 left-0 z-40 w-80 max-w-[86vw] flex-shrink-0 overflow-hidden border-r border-ink/10 bg-mist transition-transform duration-200 ease-in-out lg:static lg:z-0 lg:max-w-none lg:transition-[width] ${
                 isSidebarOpen
                   ? "translate-x-0 lg:w-80"
                   : "-translate-x-full lg:w-0 lg:translate-x-0"
               }`}
             >
               <div className="h-full overflow-y-auto">
-                <div className="flex items-start justify-between gap-4 border-b border-slate-200 bg-white px-6 py-5">
+                <div className="flex items-start justify-between gap-4 border-b border-ink/10 bg-paper/80 px-6 py-5">
                   <div>
-                    <p className="text-sm font-bold text-slate-950">
+                    <p className="font-display text-base font-semibold text-ink-deep">
                       Library Menu
                     </p>
-                    <p className="mt-1 text-xs leading-5 text-slate-600">
-                      One path through catalog, account, visits, and operations.
+                    <p className="mt-1 text-xs leading-5 text-ink/60">
+                      Catalog, account, visits, and operations.
                     </p>
                   </div>
                   <button
                     type="button"
                     onClick={() => setIsSidebarOpen(false)}
-                    className="rounded-md border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-600 transition-colors hover:bg-stone-100 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2 lg:hidden"
+                    className="dh-btn dh-btn-secondary !px-3 !py-1.5 text-xs lg:hidden"
                   >
                     Close
                   </button>
@@ -396,144 +355,142 @@ function App() {
                     <MenuLink
                       key={link.to}
                       {...link}
-                      onNavigate={closeSidebarOnSmallScreens}
+                      onNavigate={closeSidebarAfterNavigate}
                     />
                   ))}
                 </nav>
               </div>
             </aside>
 
-            <main className="flex-1 overflow-y-auto bg-stone-50 px-4 py-6 sm:px-6 lg:px-8">
+            <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:px-8">
               <div className="mx-auto w-full max-w-[1440px]">
                 <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/search" element={<Search />} />
-                <Route path="/about" element={<AboutUs />} />
-                <Route path="/hours" element={<LibraryHours />} />
-                <Route path="/policies" element={<LibraryPolicies />} />
+                  <Route path="/" element={<Home />} />
+                  <Route path="/search" element={<Search />} />
+                  <Route path="/about" element={<AboutUs />} />
+                  <Route path="/hours" element={<LibraryHours />} />
+                  <Route path="/policies" element={<LibraryPolicies />} />
 
-                <Route path="/account" element={<Account />}>
+                  <Route path="/account" element={<Account />}>
+                    <Route
+                      path="holds"
+                      element={
+                        <AccountRouter
+                          patronPage={<AccountHolds />}
+                          staffPage={<Holds />}
+                        />
+                      }
+                    />
+                    <Route
+                      path="loans"
+                      element={
+                        <AccountRouter
+                          patronPage={<Loans />}
+                          staffPage={<StaffLoans />}
+                        />
+                      }
+                    />
+                    <Route
+                      path="fines"
+                      element={
+                        <AccountRouter
+                          patronPage={<Fines />}
+                          staffPage={<StaffFines />}
+                        />
+                      }
+                    />
+                    <Route path="activity" element={<AccountActivity />} />
+                    <Route path="settings" element={<AccountSettings />} />
+                  </Route>
+
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/registration" element={<Registration />} />
+                  <Route path="/logout" element={<Logout />} />
+
+                  <Route path="/staffloans" element={<StaffLoans />} />
+                  <Route path="/stafffines" element={<StaffFines />} />
+                  <Route path="/holds" element={<Holds />} />
+                  <Route path="/lost" element={<Lost />} />
+
+                  <Route path="/itementry" element={<ItemEntry />}>
+                    <Route index element={<Navigate to="books" replace />} />
+                    <Route path="books" element={<Books />} />
+                    <Route path="periodicals" element={<Periodicals />} />
+                    <Route
+                      path="audiovisualmedia"
+                      element={<AudiovisualMedia />}
+                    />
+                    <Route path="equipment" element={<Equipment />} />
+                    <Route path="manage" element={<ItemManager />} />
+                  </Route>
+
+                  <Route path="/changerole" element={<ChangeRole />} />
                   <Route
-                    path="holds"
-                    element={
-                      <AccountRouter
-                        patronPage={<AccountHolds />}
-                        staffPage={<Holds />}
-                      />
-                    }
+                    path="/staffregistration"
+                    element={<StaffRegistration />}
+                  />
+
+                  <Route path="/report" element={<Report />} />
+                  <Route
+                    path="/report/PopularityReport"
+                    element={<PopularityReport />}
                   />
                   <Route
-                    path="loans"
-                    element={
-                      <AccountRouter
-                        patronPage={<Loans />}
-                        staffPage={<StaffLoans />}
-                      />
-                    }
+                    path="/report/patron-summary"
+                    element={<PatronSummaryReport />}
                   />
                   <Route
-                    path="fines"
-                    element={
-                      <AccountRouter
-                        patronPage={<Fines />}
-                        staffPage={<StaffFines />}
-                      />
-                    }
+                    path="/report/overduereport"
+                    element={<OverdueReport />}
                   />
-                  <Route path="activity" element={<AccountActivity />} />
-                  <Route path="settings" element={<AccountSettings />} />
-                </Route>
-
-                <Route path="/login" element={<Login />} />
-                <Route path="/registration" element={<Registration />} />
-                <Route path="/logout" element={<Logout />} />
-
-                <Route path="/staffloans" element={<StaffLoans />} />
-                <Route path="/stafffines" element={<StaffFines />} />
-                <Route path="/holds" element={<Holds />} />
-                <Route path="/lost" element={<Lost />} />
-
-                <Route path="/itementry" element={<ItemEntry />}>
-                  <Route index element={<Navigate to="books" replace />} />
-                  <Route path="books" element={<Books />} />
-                  <Route path="periodicals" element={<Periodicals />} />
                   <Route
-                    path="audiovisualmedia"
-                    element={<AudiovisualMedia />}
+                    path="/report/fine-summary"
+                    element={<FineSummaryReport />}
                   />
-                  <Route path="equipment" element={<Equipment />} />
-                  <Route path="manage" element={<ItemManager />} />
-                </Route>
+                  <Route path="/report/testing" element={<TestingReport />} />
 
-                <Route path="/changerole" element={<ChangeRole />} />
-                <Route
-                  path="/staffregistration"
-                  element={<StaffRegistration />}
-                />
-
-                <Route path="/report" element={<Report />} />
-                <Route
-                  path="/report/PopularityReport"
-                  element={<PopularityReport />}
-                />
-                <Route
-                  path="/report/patron-summary"
-                  element={<PatronSummaryReport />}
-                />
-                <Route
-                  path="/report/overduereport"
-                  element={<OverdueReport />}
-                />
-                <Route
-                  path="/report/fine-summary"
-                  element={<FineSummaryReport />}
-                />
-                <Route path="/report/testing" element={<TestingReport />} />
-
-                <Route path="/forgotpassword" element={<ForgotPassword />} />
+                  <Route path="/forgotpassword" element={<ForgotPassword />} />
                 </Routes>
               </div>
             </main>
           </div>
 
-          <footer className="border-t border-slate-200 bg-slate-950 px-4 py-8 text-sm text-stone-200 sm:px-6">
-            <div className="mx-auto grid w-full max-w-[1440px] gap-8 md:grid-cols-[1.3fr_1fr_1fr_1fr]">
+          <footer className="border-t border-ink/10 bg-ink-deep px-4 py-10 text-sm text-paper/80 sm:px-6">
+            <div className="mx-auto grid w-full max-w-[1440px] gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
               <div>
                 <div className="flex items-center gap-3">
                   <img
                     src="/Datahaven.jpg"
-                    className="h-12 w-12 rounded-md border border-white/20 object-cover"
+                    className="dh-brand-mark border-paper/20"
                     alt="Datahaven Libraries logo"
                   />
                   <div>
-                    <h2 className="text-base font-bold text-white">
+                    <h2 className="font-display text-lg font-semibold text-paper">
                       Datahaven Libraries
                     </h2>
-                    <p className="text-stone-300">Version {version}</p>
+                    <p className="text-paper/55">Version {version}</p>
                   </div>
                 </div>
-                <p className="mt-4 max-w-sm leading-relaxed text-stone-300">
+                <p className="mt-4 max-w-sm leading-relaxed text-paper/70">
                   100 Innovation Drive, Tech District, TX 75001
                 </p>
-                <p className="mt-2 font-semibold text-amber-200">
+                <p className="mt-2 font-semibold text-brass-soft">
                   (555) 019-8372
                 </p>
               </div>
 
               <div>
-                <h3 className="font-semibold uppercase tracking-wide text-white">
-                  Visit
-                </h3>
-                <ul className="mt-3 space-y-2 text-stone-300">
-                  <li>Mon-Thu: 8 AM-9 PM</li>
-                  <li>Friday: 8 AM-6 PM</li>
-                  <li>Saturday: 10 AM-4 PM</li>
+                <h3 className="font-semibold tracking-wide text-paper">Visit</h3>
+                <ul className="mt-3 space-y-2 text-paper/70">
+                  <li>Mon–Thu: 8 AM–9 PM</li>
+                  <li>Friday: 8 AM–6 PM</li>
+                  <li>Saturday: 10 AM–4 PM</li>
                   <li>Sunday: Closed</li>
                 </ul>
               </div>
 
               <div>
-                <h3 className="font-semibold uppercase tracking-wide text-white">
+                <h3 className="font-semibold tracking-wide text-paper">
                   Explore
                 </h3>
                 <ul className="mt-3 space-y-2">
@@ -541,7 +498,7 @@ function App() {
                     <li key={link.to}>
                       <NavLink
                         to={link.to}
-                        className="text-stone-300 transition-colors hover:text-amber-200"
+                        className="text-paper/70 transition-colors hover:text-brass-soft"
                       >
                         {link.label}
                       </NavLink>
@@ -551,14 +508,14 @@ function App() {
               </div>
 
               <div>
-                <h3 className="font-semibold uppercase tracking-wide text-white">
+                <h3 className="font-semibold tracking-wide text-paper">
                   Account
                 </h3>
                 <ul className="mt-3 space-y-2">
                   <li>
                     <NavLink
                       to={user ? "/account" : "/login"}
-                      className="text-stone-300 transition-colors hover:text-amber-200"
+                      className="text-paper/70 transition-colors hover:text-brass-soft"
                     >
                       {user ? "My Account" : "Log in"}
                     </NavLink>
@@ -566,7 +523,7 @@ function App() {
                   <li>
                     <NavLink
                       to="/registration"
-                      className="text-stone-300 transition-colors hover:text-amber-200"
+                      className="text-paper/70 transition-colors hover:text-brass-soft"
                     >
                       Get a Library Card
                     </NavLink>

@@ -23,13 +23,6 @@ export default function ForgotPassword() {
   const [previewLink, setPreviewLink] = useState("");
   const [previewExpiresAt, setPreviewExpiresAt] = useState("");
 
-  // Standardized classes for high-visibility light theme
-  const inputClasses =
-    "mt-2 block w-full max-w-md rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 shadow-sm outline-none focus:ring-2 focus:ring-sky-500 transition-all placeholder:text-slate-400";
-
-  const labelClasses =
-    "mt-6 w-full max-w-md text-left text-sm font-bold text-slate-700 uppercase tracking-wide";
-
   async function HandleRequestReset(event) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -87,38 +80,33 @@ export default function ForgotPassword() {
   }
 
   return (
-    <section className="mx-auto flex w-full max-w-xl flex-col items-center rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm sm:p-12">
-      <p className="text-xs font-bold uppercase tracking-[0.3em] text-sky-700">
-        Account Recovery
-      </p>
-      <h1 className="mt-2 text-4xl font-bold tracking-tight text-slate-900">
-        {token ? "Reset Password" : "Forgot Password"}
+    <section className="dh-auth-panel">
+      <p className="dh-kicker text-center">Account recovery</p>
+      <h1 className="mt-2 text-center font-display text-3xl font-semibold tracking-tight text-ink-deep sm:text-4xl">
+        {token ? "Reset password" : "Forgot password"}
       </h1>
-      <p className="mt-4 max-w-md text-base leading-relaxed text-slate-600">
+      <p className="mx-auto mt-3 max-w-md text-center text-sm leading-6 text-ink/65">
         {token
-          ? "Enter your new password below to finish the reset process."
-          : "Enter your email address and we'll send you a link to get back into your account."}
+          ? "Enter a new password to finish resetting your account."
+          : "Enter your email and we will send a link to get back into your account."}
       </p>
 
       {message && (
-        <div className="mt-6 w-full max-w-md rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+        <div className="mt-6 w-full border border-success/25 bg-success/10 px-4 py-3 text-left text-sm font-medium text-success">
           {message}
         </div>
       )}
 
       {error && (
-        <div className="mt-6 w-full max-w-md rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+        <div className="mt-6 w-full border border-danger/25 bg-danger/10 px-4 py-3 text-left text-sm font-medium text-danger">
           {error}
         </div>
       )}
 
       {token ? (
-        <form
-          className="flex w-full flex-col items-center"
-          onSubmit={HandleResetPassword}
-        >
-          <label htmlFor="new-password" className={labelClasses}>
-            New Password
+        <form className="mt-6 w-full" onSubmit={HandleResetPassword}>
+          <label htmlFor="new-password" className="dh-label">
+            New password
           </label>
           <input
             required
@@ -127,11 +115,12 @@ export default function ForgotPassword() {
             name="newPassword"
             type="password"
             placeholder="Min. 8 characters"
-            className={inputClasses}
+            className="dh-input"
+            autoComplete="new-password"
           />
 
-          <label htmlFor="confirm-password" className={labelClasses}>
-            Confirm Password
+          <label htmlFor="confirm-password" className="dh-label mt-5">
+            Confirm password
           </label>
           <input
             required
@@ -140,23 +129,22 @@ export default function ForgotPassword() {
             name="confirmPassword"
             type="password"
             placeholder="Repeat your password"
-            className={inputClasses}
+            className="dh-input"
+            autoComplete="new-password"
           />
 
           <div className="mt-8">
             <SubmitButton
               title={isSubmitting ? "Resetting..." : "Reset Password"}
               disabledValue={isSubmitting}
+              fullwidth
             />
           </div>
         </form>
       ) : (
-        <form
-          className="flex w-full flex-col items-center"
-          onSubmit={HandleRequestReset}
-        >
-          <label htmlFor="recovery-email" className={labelClasses}>
-            Email Address
+        <form className="mt-6 w-full" onSubmit={HandleRequestReset}>
+          <label htmlFor="recovery-email" className="dh-label">
+            Email address
           </label>
           <input
             required
@@ -164,41 +152,35 @@ export default function ForgotPassword() {
             name="email"
             type="email"
             placeholder="name@example.com"
-            className={inputClasses}
+            className="dh-input"
+            autoComplete="email"
           />
           <div className="mt-8">
             <SubmitButton
               title={isSubmitting ? "Generating..." : "Send Reset Link"}
               disabledValue={isSubmitting}
+              fullwidth
             />
           </div>
         </form>
       )}
 
       {!token && previewLink && (
-        <div className="mt-8 w-full max-w-md rounded-2xl border border-sky-200 bg-sky-50 p-6 text-left">
-          <p className="text-xs font-bold uppercase tracking-wider text-sky-700">
-            Development Preview
-          </p>
-          <a
-            href={previewLink}
-            className="mt-2 block break-all text-sm font-medium text-sky-700 underline hover:text-sky-800"
-          >
+        <div className="mt-8 w-full border border-ink/10 bg-mist/80 p-5 text-left">
+          <p className="dh-kicker">Development preview</p>
+          <a href={previewLink} className="dh-link mt-2 block break-all text-sm">
             {previewLink}
           </a>
           {previewExpiresAt && (
-            <p className="mt-2 text-xs text-slate-500 italic">
+            <p className="mt-2 text-xs italic text-ink/50">
               Expires: {FormatExpiresAt(previewExpiresAt)}
             </p>
           )}
         </div>
       )}
 
-      <div className="mt-10">
-        <Link
-          to="/login"
-          className="text-sm font-bold text-sky-700 hover:text-sky-700 transition-colors"
-        >
+      <div className="mt-10 text-center">
+        <Link to="/login" className="dh-link text-sm">
           Return to login
         </Link>
       </div>

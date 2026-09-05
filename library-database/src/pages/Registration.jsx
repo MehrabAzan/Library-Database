@@ -6,28 +6,19 @@ import { Link } from "react-router-dom";
 export default function Registration() {
   const { showSuccess, showError } = useMessage();
 
-  // Standardized classes for the high-visibility light theme
-  const inputClasses =
-    "block w-full rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 shadow-sm outline-none focus:ring-2 focus:ring-sky-500 transition-all placeholder:text-slate-400";
-
-  const labelClasses =
-    "block text-sm font-bold text-slate-700 uppercase tracking-wide mb-2 text-left";
-
   return (
-    <section className="mx-auto flex w-full max-w-4xl flex-col items-center rounded-3xl border border-slate-200 bg-white p-8 shadow-sm sm:p-12 text-center">
-      <p className="text-xs font-bold uppercase tracking-[0.3em] text-sky-700">
-        Membership
-      </p>
-      <h1 className="mt-2 text-4xl font-bold tracking-tight text-slate-900">
-        Create Account
+    <section className="dh-auth-panel dh-auth-panel-wide">
+      <p className="dh-kicker text-center">Membership</p>
+      <h1 className="mt-2 text-center font-display text-3xl font-semibold tracking-tight text-ink-deep sm:text-4xl">
+        Get a library card
       </h1>
-      <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600">
-        Join our library community to borrow items, manage holds, and access
-        digital resources.
+      <p className="mx-auto mt-3 max-w-xl text-center text-sm leading-6 text-ink/65">
+        Join Datahaven to borrow items, manage holds, and access digital
+        resources.
       </p>
 
       <form
-        className="w-full mt-10"
+        className="mt-10 w-full"
         onSubmit={async (e) => {
           e.preventDefault();
           const formData = new FormData(e.target);
@@ -55,11 +46,10 @@ export default function Registration() {
         }}
       >
         <div className="space-y-6">
-          {/* Name & Birthday Row */}
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             <div>
-              <label htmlFor="firstname" className={labelClasses}>
-                First Name
+              <label htmlFor="firstname" className="dh-label">
+                First name
               </label>
               <input
                 required
@@ -67,12 +57,13 @@ export default function Registration() {
                 name="firstname"
                 type="text"
                 placeholder="Jane"
-                className={inputClasses}
+                className="dh-input"
+                autoComplete="given-name"
               />
             </div>
             <div>
-              <label htmlFor="lastname" className={labelClasses}>
-                Last Name
+              <label htmlFor="lastname" className="dh-label">
+                Last name
               </label>
               <input
                 required
@@ -80,28 +71,28 @@ export default function Registration() {
                 name="lastname"
                 type="text"
                 placeholder="Doe"
-                className={inputClasses}
+                className="dh-input"
+                autoComplete="family-name"
               />
             </div>
             <div>
-              <label htmlFor="birthday" className={labelClasses}>
-                Date of Birth
+              <label htmlFor="birthday" className="dh-label">
+                Date of birth
               </label>
               <input
                 required
                 id="birthday"
                 name="birthday"
                 type="date"
-                className={inputClasses}
+                className="dh-input"
               />
             </div>
           </div>
 
-          {/* Credentials Row */}
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
-              <label htmlFor="email" className={labelClasses}>
-                Email Address
+              <label htmlFor="email" className="dh-label">
+                Email address
               </label>
               <input
                 required
@@ -109,11 +100,12 @@ export default function Registration() {
                 name="email"
                 type="email"
                 placeholder="jane@example.com"
-                className={inputClasses}
+                className="dh-input"
+                autoComplete="email"
               />
             </div>
             <div>
-              <label htmlFor="password" className={labelClasses}>
+              <label htmlFor="password" className="dh-label">
                 Password
               </label>
               <input
@@ -122,24 +114,22 @@ export default function Registration() {
                 name="password"
                 type="password"
                 placeholder="Min. 8 characters"
-                className={inputClasses}
+                className="dh-input"
+                autoComplete="new-password"
               />
             </div>
           </div>
 
-          <div className="flex flex-col items-center pt-6">
+          <div className="flex flex-col items-center pt-2">
             <SubmitButton
               title={"Register Account"}
               value={"OK"}
               halfwidth={true}
             />
 
-            <p className="mt-8 text-sm text-slate-500">
+            <p className="mt-8 text-sm text-ink/60">
               Already have an account?{" "}
-              <Link
-                to="/login"
-                className="font-bold text-sky-700 hover:text-sky-700 transition-colors"
-              >
+              <Link to="/login" className="dh-link">
                 Sign in here
               </Link>
             </p>

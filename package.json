@@ -6,7 +6,7 @@
     "setup": "node scripts/setup.js",
     "dev": "node scripts/dev.js",
     "dev:backend": "npm --prefix backend run dev",
-    "dev:frontend": "npm --prefix react run dev"
+    "dev:frontend": "npm --prefix library-database run dev"
   },
   "dependencies": {
     "lucide-react": "^1.7.0"

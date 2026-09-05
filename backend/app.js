@@ -6326,6 +6326,44 @@ app.use((error, req, res, next) => {
   res.status(500).json({ error: "Internal server error." });
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port: ${port}`);
-});
+async function EnsureCoverImageColumns() {
+  const tables = ["books", "periodicals", "audiovisual_media"];
+
+  for (const tableName of tables) {
+    const [rows] = await pool.query(
+      `
+      SELECT 1 AS present
+      FROM information_schema.COLUMNS
+      WHERE TABLE_SCHEMA = DATABASE()
+        AND TABLE_NAME = ?
+        AND COLUMN_NAME = 'cover_image_url'
+      LIMIT 1
+      `,
+      [tableName]
+    );
+
+    if (rows.length === 0) {
+      await pool.query(
+        `ALTER TABLE \`${tableName}\` ADD COLUMN cover_image_url VARCHAR(2048) NULL AFTER title`
+      );
+      console.log(`Added cover_image_url column to ${tableName}`);
+    }
+  }
+}
+
+async function StartServer() {
+  try {
+    await EnsureCoverImageColumns();
+  } catch (error) {
+    console.error(
+      "Failed to ensure cover_image_url columns:",
+      error instanceof Error ? error.message : error
+    );
+  }
+
+  app.listen(port, () => {
+    console.log(`Server is running on port: ${port}`);
+  });
+}
+
+StartServer();

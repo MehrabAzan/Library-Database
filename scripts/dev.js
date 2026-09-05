@@ -49,7 +49,7 @@ LogStartupHelp();
 
 const children = [
   RunProcess("backend", "backend"),
-  RunProcess("frontend", "react"),
+  RunProcess("frontend", "library-database"),
 ];
 
 let isShuttingDown = false;

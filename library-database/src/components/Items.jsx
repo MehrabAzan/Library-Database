@@ -33,9 +33,9 @@ const itemImageThemes = {
   },
   audiovisualmedia: {
     label: "MEDIA",
-    start: "#7e22ce",
-    end: "#581c87",
-    accent: "#e9d5ff",
+    start: "#14555f",
+    end: "#0b3a42",
+    accent: "#d4e8eb",
   },
   equipment: {
     label: "GEAR",
@@ -99,7 +99,7 @@ function BuildFallbackImageSource(itemData) {
 
 export function ItemImage({
   itemData,
-  className = "h-48 w-36 shrink-0 rounded-md object-cover border border-slate-200 shadow-sm",
+  className = "h-48 w-36 shrink-0 rounded-md object-cover border border-ink/15",
 }) {
   const fallbackSource = BuildFallbackImageSource(itemData);
   const resolvedSource =
@@ -264,46 +264,46 @@ export default function Item({ itemData }) {
 
   return (
     <div className="w-full">
-      <div className="grid gap-4 rounded-lg bg-white border border-slate-200 p-4 shadow-sm lg:grid-cols-4">
+      <div className="grid gap-4 border border-ink/10 bg-paper/80 p-4 lg:grid-cols-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:gap-6 lg:col-span-3">
           <ItemImage itemData={itemData} />
           <ItemHolder data={itemData} />
         </div>
 
-        <div className="grid grid-rows-2 items-center border-t border-slate-100 pt-4 lg:col-span-1 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
-          <div className="flex flex-wrap justify-center gap-2 text-center text-xs font-bold uppercase tracking-tight text-slate-500">
+        <div className="grid grid-rows-2 items-center border-t border-ink/10 pt-4 lg:col-span-1 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
+          <div className="flex flex-wrap justify-center gap-2 text-center text-xs font-bold uppercase tracking-tight text-ink/50">
             <div className="flex flex-col flex-1">
-              <span className="text-slate-500">Available</span>
-              <span className="text-slate-900 text-base">
+              <span className="text-ink/50">Available</span>
+              <span className="text-ink-deep text-base">
                 {itemData.available}
               </span>
             </div>
 
             <div className="flex flex-col flex-1">
-              <span className="text-slate-500">Reserved</span>
-              <span className="text-slate-900 text-base">
+              <span className="text-ink/50">Reserved</span>
+              <span className="text-ink-deep text-base">
                 {itemData.reservedCount ?? 0}
               </span>
             </div>
 
             <div className="flex flex-col flex-1">
-              <span className="text-slate-500">Queue</span>
-              <span className="text-slate-900 text-base">
+              <span className="text-ink/50">Queue</span>
+              <span className="text-ink-deep text-base">
                 {itemData.queueCount ?? 0}
               </span>
             </div>
 
             <div className="flex flex-col flex-1">
-              <span className="text-slate-500">Unavailable</span>
-              <span className="text-slate-900 text-base">
+              <span className="text-ink/50">Unavailable</span>
+              <span className="text-ink-deep text-base">
                 {itemData.unavailable}
               </span>
             </div>
 
             {itemData.category !== "equipment" ? (
               <div className="flex flex-col flex-1">
-                <span className="text-slate-500">Shelf</span>
-                <span className="text-slate-900 text-base">
+                <span className="text-ink/50">Shelf</span>
+                <span className="text-ink-deep text-base">
                   {itemData.shelfNumber}
                 </span>
               </div>
@@ -325,8 +325,8 @@ export default function Item({ itemData }) {
                   />
 
                   {activeStaffAction ? (
-                    <div className="mt-2 flex w-full flex-col gap-2 rounded-lg bg-slate-50 p-4 border border-slate-200 shadow-inner">
-                      <div className="text-[10px] font-bold text-sky-900 uppercase tracking-widest">
+                    <div className="mt-2 flex w-full flex-col gap-2 rounded-lg bg-mist p-4 border border-ink/15 shadow-inner">
+                      <div className="text-[10px] font-bold text-ink-soft uppercase tracking-widest">
                         {activeStaffAction === "hold"
                           ? "Enter hold patron ID"
                           : "Enter checkout patron ID"}
@@ -340,7 +340,7 @@ export default function Item({ itemData }) {
                           setPatronIdInput(event.target.value)
                         }
                         placeholder="Patron ID"
-                        className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-sky-700"
+                        className="w-full rounded-md border border-ink/15 bg-white px-3 py-2 text-sm text-ink-deep outline-none focus:ring-2 focus:ring-ink-soft"
                       />
 
                       <div className="flex gap-2">
@@ -515,7 +515,7 @@ export function CarouselItem({ itemData }) {
   return (
     <div className="w-70">
       {itemData.category !== "equipment" ? (
-        <div className="h-full grid grid-rows-4 rounded-lg bg-white border border-slate-200 p-4 transition transform hover:-translate-y-1 hover:shadow-md">
+        <div className="h-full grid grid-rows-4 border border-ink/10 bg-paper/80 p-4 transition hover:border-ink/25">
           <div className="row-span-4 m-2">
             <CarouselItemHolder data={itemData} />
           </div>
@@ -528,7 +528,7 @@ export function CarouselItem({ itemData }) {
               >
                 {itemData.available >= 1 ? "Available" : "Not Available"}
               </span>
-              <span className="text-slate-500">
+              <span className="text-ink/50">
                 Shelf: {itemData.shelfNumber}
               </span>
             </div>
@@ -552,8 +552,8 @@ export function CarouselItem({ itemData }) {
                   )}
 
                   {activeStaffAction ? (
-                    <div className="mt-2 flex w-full flex-col gap-2 rounded-lg bg-slate-50 p-3 border border-slate-200">
-                      <div className="text-xs font-bold text-sky-900 uppercase">
+                    <div className="mt-2 flex w-full flex-col gap-2 rounded-lg bg-mist p-3 border border-ink/15">
+                      <div className="text-xs font-bold text-ink-soft uppercase">
                         Patron ID
                       </div>
 
@@ -565,7 +565,7 @@ export function CarouselItem({ itemData }) {
                           setPatronIdInput(event.target.value)
                         }
                         placeholder="ID"
-                        className="w-full rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-900 outline-none focus:ring-2 focus:ring-sky-700"
+                        className="w-full rounded-md border border-ink/15 bg-white px-3 py-1.5 text-xs text-ink-deep outline-none focus:ring-2 focus:ring-ink-soft"
                       />
 
                       <div className="flex gap-2">
@@ -609,7 +609,7 @@ export function CarouselItem({ itemData }) {
           </div>
         </div>
       ) : (
-        <div className="h-full grid grid-rows-4 rounded-lg bg-white border border-slate-200 p-4 transition transform hover:-translate-y-1 hover:shadow-md">
+        <div className="h-full grid grid-rows-4 border border-ink/10 bg-paper/80 p-4 transition hover:border-ink/25">
           <div className="row-span-4 m-2">
             <CarouselItemHolder data={itemData} />
           </div>
@@ -643,8 +643,8 @@ export function CarouselItem({ itemData }) {
                   )}
 
                   {activeStaffAction ? (
-                    <div className="mt-2 flex w-full flex-col gap-2 rounded-lg bg-slate-50 p-3 border border-slate-200">
-                      <div className="text-sm font-bold text-sky-900 uppercase">
+                    <div className="mt-2 flex w-full flex-col gap-2 rounded-lg bg-mist p-3 border border-ink/15">
+                      <div className="text-sm font-bold text-ink-soft uppercase">
                         Patron ID
                       </div>
 
@@ -656,7 +656,7 @@ export function CarouselItem({ itemData }) {
                           setPatronIdInput(event.target.value)
                         }
                         placeholder="ID"
-                        className="w-full rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-900 outline-none focus:ring-2 focus:ring-sky-700"
+                        className="w-full rounded-md border border-ink/15 bg-white px-3 py-1.5 text-xs text-ink-deep outline-none focus:ring-2 focus:ring-ink-soft"
                       />
 
                       <div className="flex gap-2">
@@ -717,20 +717,20 @@ export function CarouselItemHolder({ data }) {
     <div className="flex flex-col items-center justify-center text-center">
       <ItemImage
         itemData={data}
-        className="h-36 w-26 rounded-md object-cover shadow-md mb-4 border border-slate-100"
+        className="mb-4 h-36 w-26 rounded-md border border-ink/15 object-cover"
       />
-      <div className="text-lg font-bold text-slate-900 leading-tight">
+      <div className="font-display text-lg font-semibold leading-tight text-ink-deep">
         {data.title}
       </div>
 
       {creator ? (
-        <div className="text-sm font-bold text-sky-900 uppercase tracking-wide leading-tight">
+        <div className="mt-1 text-sm font-semibold uppercase tracking-wide text-ink-soft">
           {creator}
         </div>
       ) : null}
 
       {metaLine ? (
-        <div className="text-xs font-bold text-slate-600 uppercase tracking-widest leading-tight">
+        <div className="mt-1 text-xs font-semibold uppercase tracking-widest text-ink/55">
           {metaLine}
           {data.category === "audiovisualmedia" && data.runtime
             ? `, ${data.runtime} MINS`
@@ -739,15 +739,11 @@ export function CarouselItemHolder({ data }) {
       ) : null}
 
       {data.summary ? (
-        data.summary.length > 120 ? (
-          <div className="text-sm text-slate-600 mt-1 mb-1 leading-relaxed leading-tight">
-            {data.summary.slice(0, 120)}...
-          </div>
-        ) : (
-          <div className="text-sm text-slate-600 mt-1 mb-1 leading-relaxed leading-tight">
-            {data.summary}
-          </div>
-        )
+        <div className="mt-2 mb-1 text-sm leading-relaxed text-ink/65">
+          {data.summary.length > 120
+            ? `${data.summary.slice(0, 120)}...`
+            : data.summary}
+        </div>
       ) : null}
     </div>
   );
@@ -764,39 +760,39 @@ export function ItemStaff({
 
   return (
     <div className="w-full">
-      <div className="grid gap-4 rounded-lg bg-white border border-slate-200 p-4 shadow-sm lg:grid-cols-5">
+      <div className="grid gap-4 border border-ink/10 bg-paper/80 p-4 lg:grid-cols-5">
         <div className="flex flex-col gap-4 sm:flex-row sm:gap-6 lg:col-span-3">
           <ItemImage itemData={itemData} />
           <ItemHolder data={itemData} />
         </div>
 
-        <div className="grid grid-cols-2 items-center border-t border-slate-100 pt-4 lg:col-span-1 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
+        <div className="grid grid-cols-2 items-center border-t border-ink/10 pt-4 lg:col-span-1 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
           {itemData.status === "Available" ? (
-            <div className="grid grid-rows-2 col-span-1 text-sm text-slate-600">
+            <div className="grid grid-rows-2 col-span-1 text-sm text-ink/65">
               <div>
                 Copy:{" "}
-                <span className="font-bold text-slate-900">
+                <span className="font-bold text-ink-deep">
                   {itemData.copy}
                 </span>
               </div>
               <div>
                 Status:{" "}
-                <span className="font-bold text-slate-900">
+                <span className="font-bold text-ink-deep">
                   {itemData.status}
                 </span>
               </div>
             </div>
           ) : itemData.status === "On hold" ? (
-            <div className="grid grid-rows-4 col-span-1 text-sm text-slate-600">
+            <div className="grid grid-rows-4 col-span-1 text-sm text-ink/65">
               <div>
                 Copy:{" "}
-                <span className="font-bold text-slate-900">
+                <span className="font-bold text-ink-deep">
                   {itemData.copy}
                 </span>
               </div>
               <div>
                 Status:{" "}
-                <span className="font-bold text-slate-900">
+                <span className="font-bold text-ink-deep">
                   {itemData.status}
                 </span>
               </div>
@@ -806,16 +802,16 @@ export function ItemStaff({
               </div>
             </div>
           ) : itemData.status === "Loaned" ? (
-            <div className="grid grid-rows-4 col-span-1 text-sm text-slate-600">
+            <div className="grid grid-rows-4 col-span-1 text-sm text-ink/65">
               <div>
                 Copy:{" "}
-                <span className="font-bold text-slate-900">
+                <span className="font-bold text-ink-deep">
                   {itemData.copy}
                 </span>
               </div>
               <div>
                 Status:{" "}
-                <span className="font-bold text-slate-900">
+                <span className="font-bold text-ink-deep">
                   {itemData.status}
                 </span>
               </div>
@@ -825,16 +821,16 @@ export function ItemStaff({
               </div>
             </div>
           ) : (
-            <div className="grid grid-rows-2 col-span-1 text-sm text-slate-600">
+            <div className="grid grid-rows-2 col-span-1 text-sm text-ink/65">
               <div>
                 Copy:{" "}
-                <span className="font-bold text-slate-900">
+                <span className="font-bold text-ink-deep">
                   {itemData.copy}
                 </span>
               </div>
               <div>
                 Status:{" "}
-                <span className="font-bold text-slate-900">
+                <span className="font-bold text-ink-deep">
                   {itemData.status}
                 </span>
               </div>
@@ -878,27 +874,27 @@ export function ItemLoan({ itemData }) {
 
   return (
     <div className="w-full">
-      <div className="grid gap-4 rounded-lg bg-white border border-slate-200 p-4 shadow-sm lg:grid-cols-4">
+      <div className="grid gap-4 border border-ink/10 bg-paper/80 p-4 lg:grid-cols-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:gap-6 lg:col-span-3">
           <ItemImage itemData={itemData} />
           <ItemHolder data={itemData} />
         </div>
 
         {itemData.overdue ? (
-          <div className="grid grid-rows-2 items-center text-center border-t border-slate-100 pt-4 lg:col-span-1 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
-            <div className="text-sm font-medium text-slate-600">
+          <div className="grid grid-rows-2 items-center text-center border-t border-ink/10 pt-4 lg:col-span-1 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
+            <div className="text-sm font-medium text-ink/65">
               Due:{" "}
-              <span className="font-bold text-slate-900">{formattedDate}</span>
+              <span className="font-bold text-ink-deep">{formattedDate}</span>
             </div>
             <div className="font-bold text-red-600 bg-red-50 px-3 py-1 rounded-full text-xs uppercase tracking-widest">
               Overdue
             </div>
           </div>
         ) : (
-          <div className="grid grid-rows-2 items-center text-center border-t border-slate-100 pt-4 lg:col-span-1 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
-            <div className="text-sm font-medium text-slate-600">
+          <div className="grid grid-rows-2 items-center text-center border-t border-ink/10 pt-4 lg:col-span-1 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
+            <div className="text-sm font-medium text-ink/65">
               Due:{" "}
-              <span className="font-bold text-slate-900">{formattedDate}</span>
+              <span className="font-bold text-ink-deep">{formattedDate}</span>
             </div>
           </div>
         )}
@@ -910,14 +906,14 @@ export function ItemLoan({ itemData }) {
 export function ItemHold({ itemData, onCancel }) {
   return (
     <div className="w-full">
-      <div className="grid gap-4 rounded-lg bg-white border border-slate-200 p-4 shadow-sm lg:grid-cols-4">
+      <div className="grid gap-4 border border-ink/10 bg-paper/80 p-4 lg:grid-cols-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:gap-6 lg:col-span-3">
           <ItemImage itemData={itemData} />
           <ItemHolder data={itemData} />
         </div>
 
         {itemData.ready ? (
-          <div className="grid grid-rows-2 items-center text-center border-t border-slate-100 pt-4 gap-2 lg:col-span-1 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
+          <div className="grid grid-rows-2 items-center text-center border-t border-ink/10 pt-4 gap-2 lg:col-span-1 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
             <span className="text-xs font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full uppercase tracking-widest">
               Ready for pickup
             </span>
@@ -928,7 +924,7 @@ export function ItemHold({ itemData, onCancel }) {
             />
           </div>
         ) : (
-          <div className="grid grid-rows-2 items-center text-center border-t border-slate-100 pt-4 gap-2 lg:col-span-1 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
+          <div className="grid grid-rows-2 items-center text-center border-t border-ink/10 pt-4 gap-2 lg:col-span-1 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
             <span className="text-xs font-bold text-amber-600 bg-amber-50 px-3 py-1 rounded-full uppercase tracking-widest">
               In queue
             </span>
@@ -958,7 +954,7 @@ export function ItemHolder({ data }) {
   if (data.category === "equipment") {
     return (
       <div className="flex flex-col justify-center">
-        <div className="text-2xl font-bold text-slate-900">{data.title}</div>
+        <div className="text-2xl font-bold text-ink-deep">{data.title}</div>
       </div>
     );
   }
@@ -966,17 +962,17 @@ export function ItemHolder({ data }) {
   return (
     <div className="flex flex-col justify-center pr-2">
       <div className="flex-1">
-        <div className="text-2xl font-bold text-slate-900 leading-tight">
+        <div className="text-2xl font-bold text-ink-deep leading-tight">
           {data.title}
         </div>
 
         {creator ? (
           <div className="text-lg font-medium mt-1">
-            by <span className="text-sky-800">{creator}</span>
+            by <span className="text-ink-soft">{creator}</span>
           </div>
         ) : null}
 
-        <div className="mt-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
+        <div className="mt-2 text-xs font-bold text-ink/50 uppercase tracking-widest">
           {metaLine}
           {data.category === "audiovisualmedia" && data.runtime
             ? ` - ${data.runtime} MINS`
@@ -984,7 +980,7 @@ export function ItemHolder({ data }) {
         </div>
 
         {pubLine ? (
-          <div className="text-xs font-medium text-slate-500 mt-1">
+          <div className="text-xs font-medium text-ink/50 mt-1">
             {pubLine}
           </div>
         ) : null}
@@ -992,11 +988,11 @@ export function ItemHolder({ data }) {
 
       {data.summary ? (
         data.summary.length > 1000 ? (
-          <div className="text-sm text-slate-600 mt-2 mb-2 leading-relaxed flex-1">
+          <div className="text-sm text-ink/65 mt-2 mb-2 leading-relaxed flex-1">
             {data.summary.slice(0, 1000)}...
           </div>
         ) : (
-          <div className="text-sm text-slate-600 mt-2 mb-2 leading-relaxed flex-1">
+          <div className="text-sm text-ink/65 mt-2 mb-2 leading-relaxed flex-1">
             {data.summary}
           </div>
         )
