@@ -116,7 +116,7 @@ const NotificationBell = () => {
       {/* Bell Button */}
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-slate-500 hover:text-sky-600 transition-colors duration-200"
+        className="relative p-2 text-ink/50 hover:text-ink-soft transition-colors duration-200"
       >
         <svg 
           xmlns="http://www.w3.org/2000/svg" 
@@ -138,13 +138,13 @@ const NotificationBell = () => {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-3 w-80 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-3 bg-slate-50 border-b border-slate-100">
-            <h3 className="text-sm font-bold text-slate-900">Recent Activity</h3>
+        <div className="absolute right-0 mt-3 w-80 bg-white border border-ink/15 rounded-2xl shadow-xl z-50 overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3 bg-mist border-b border-ink/10">
+            <h3 className="text-sm font-bold text-ink-deep">Recent Activity</h3>
             {unreadCount > 0 && (
               <button 
                 onClick={markAllAsRead}
-                className="text-xs font-bold text-sky-600 hover:text-sky-700 transition-colors"
+                className="text-xs font-bold text-ink-soft hover:text-ink-soft transition-colors"
               >
                 Mark all as read
               </button>
@@ -153,7 +153,7 @@ const NotificationBell = () => {
           
           <div className="max-h-80 overflow-y-auto overflow-x-hidden">
             {isLoading ? (
-               <div className="px-4 py-8 text-center text-sm font-medium text-slate-500">
+               <div className="px-4 py-8 text-center text-sm font-medium text-ink/50">
                  Loading activity...
                </div>
             ) : notifications.length > 0 ? (
@@ -164,10 +164,10 @@ const NotificationBell = () => {
                   <div 
                     key={notification.activityId} 
                     onClick={() => handleNotificationClick(notification.activityId)}
-                    className={`px-4 py-4 border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer ${!isRead ? 'bg-sky-50/40' : ''}`}
+                    className={`px-4 py-4 border-b border-ink/10 hover:bg-mist transition-colors cursor-pointer ${!isRead ? 'bg-ink/5' : ''}`}
                   >
                     <div className="flex justify-between items-start">
-                      <p className={`text-sm font-bold ${!isRead ? 'text-sky-900' : 'text-slate-900'}`}>
+                      <p className={`text-sm font-bold ${!isRead ? 'text-ink-soft' : 'text-ink-deep'}`}>
                         {notification.headline}
                       </p>
                       {notification.status === 'Overdue' && (
@@ -179,27 +179,27 @@ const NotificationBell = () => {
                     </div>
                     
                     {notification.title && (
-                      <p className="text-sm text-slate-600 mt-1 font-medium leading-snug">{notification.title}</p>
+                      <p className="text-sm text-ink/65 mt-1 font-medium leading-snug">{notification.title}</p>
                     )}
                     
                     <div className="flex justify-between items-center mt-3">
-                      <p className="text-xs font-bold text-sky-600">{notification.detail}</p>
-                      <p className="text-[11px] font-medium text-slate-400">{FormatActivityDate(notification.activityDate)}</p>
+                      <p className="text-xs font-bold text-ink-soft">{notification.detail}</p>
+                      <p className="text-[11px] font-medium text-ink/40">{FormatActivityDate(notification.activityDate)}</p>
                     </div>
                   </div>
                 );
               })
             ) : (
-              <div className="px-4 py-10 text-center text-sm font-medium text-slate-400">
+              <div className="px-4 py-10 text-center text-sm font-medium text-ink/40">
                 No new activity
               </div>
             )}
           </div>
           
-          <div className="px-4 py-3 bg-slate-50 text-center border-t border-slate-100">
+          <div className="px-4 py-3 bg-mist text-center border-t border-ink/10">
             <button 
               onClick={handleViewAllClick}
-              className="text-sm text-sky-600 hover:text-sky-700 font-bold w-full transition-colors"
+              className="text-sm text-ink-soft hover:text-ink-soft font-bold w-full transition-colors"
             >
               View all activity
             </button>

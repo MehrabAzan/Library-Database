@@ -45,15 +45,15 @@ function GetCurrentMonthDateRange() {
 
 function SummaryCard({ title, value, subtitle = "" }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-xs font-bold uppercase tracking-[0.25em] text-sky-700">
+    <div className="border border-ink/10 bg-paper/80 p-5">
+      <p className="text-xs font-bold uppercase tracking-[0.16em] text-brass-deep">
         {title}
       </p>
-      <p className="mt-3 text-3xl font-bold text-slate-900">
+      <p className="mt-3 text-3xl font-bold text-ink-deep">
         {value}
       </p>
       {subtitle ? (
-        <p className="mt-2 text-sm font-medium text-slate-600">
+        <p className="mt-2 text-sm font-medium text-ink/65">
           {subtitle}
         </p>
       ) : null}
@@ -310,34 +310,32 @@ export default function OverdueReport() {
   }
 
   return (
-    <section className="mx-auto flex w-full max-w-7xl flex-col rounded-3xl border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/50">
+    <section className="mx-auto flex w-full max-w-7xl flex-col border-y border-ink/10 bg-paper/80 py-8">
 
-      <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-900">
-        Operations Report
-      </h1>
+      <h1 className="font-display text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-tight text-ink-deep mt-2 text-4xl">Operations Report</h1>
 
-      <p className="mt-3 text-sm font-medium text-sky-700">
+      <p className="mt-3 text-sm font-medium text-ink-soft">
         Note: This report defaults to the current month and highlights operational
         activity in the library.
       </p>
 
-      <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600">
+      <p className="mt-4 max-w-3xl text-base leading-7 text-ink/65">
         Review monthly library operations including circulation activity,
         collection growth, and patron registration. Use filters to view
         a different date range when needed.
       </p>
 
       {isLoading ? (
-        <div className="mt-8 font-medium text-slate-600">Loading operations report...</div>
+        <div className="mt-8 font-medium text-ink/65">Loading operations report...</div>
       ) : (
         <>
           <div className="mt-8">
-            <p className="text-sm font-semibold text-slate-700">
+            <p className="text-sm font-semibold text-ink/70">
               {dateRangeLabel}
             </p>
           </div>
 
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-5 bg-slate-50 p-6 rounded-2xl border border-slate-200">
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-5 bg-mist/60 p-6 rounded-lg border border-ink/10">
             <SummaryCard title="Loans" value={filteredSummary.loans} />
             <SummaryCard title="Returns" value={filteredSummary.returns} />
             <SummaryCard title="Lost Items" value={filteredSummary.lost} />
@@ -345,44 +343,44 @@ export default function OverdueReport() {
             <SummaryCard title="New Patrons" value={filteredSummary.newPatrons} />
           </div>
 
-          <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-bold text-slate-900">
+          <div className="mt-8 border-y border-ink/10 bg-paper/80 py-6">
+            <h2 className="text-xl font-bold text-ink-deep">
               Search / Filter / Sort
             </h2>
 
             <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               <div>
-                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-700">
+                <label className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">
                   Date Start
                 </label>
                 <input
                   type="date"
                   value={startDate}
                   onChange={(event) => setStartDate(event.target.value)}
-                  className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
+                  className="block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)] mt-2"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-700">
+                <label className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">
                   Date End
                 </label>
                 <input
                   type="date"
                   value={endDate}
                   onChange={(event) => setEndDate(event.target.value)}
-                  className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
+                  className="block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)] mt-2"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-700">
+                <label className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">
                   Filter By Activity
                 </label>
                 <select
                   value={activityFilter}
                   onChange={(event) => setActivityFilter(event.target.value)}
-                  className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
+                  className="block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)] mt-2"
                 >
                   <option>All</option>
                   <option>Loan</option>
@@ -394,13 +392,13 @@ export default function OverdueReport() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-700">
+                <label className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">
                   Search By
                 </label>
                 <select
                   value={searchBy}
                   onChange={(event) => setSearchBy(event.target.value)}
-                  className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
+                  className="block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)] mt-2"
                 >
                   <option>All</option>
                   <option>Activity Type</option>
@@ -413,7 +411,7 @@ export default function OverdueReport() {
               </div>
 
               <div className="xl:col-span-2">
-                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-700">
+                <label className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">
                   Search Text
                 </label>
                 <input
@@ -421,18 +419,18 @@ export default function OverdueReport() {
                   value={searchText}
                   onChange={(event) => setSearchText(event.target.value)}
                   placeholder="Enter search value..."
-                  className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
+                  className="block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)] mt-2"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-700">
+                <label className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">
                   Sort By
                 </label>
                 <select
                   value={sortBy}
                   onChange={(event) => setSortBy(event.target.value)}
-                  className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
+                  className="block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)] mt-2"
                 >
                   <option value="activityDate">Activity Date</option>
                   <option value="activityType">Activity Type</option>
@@ -446,13 +444,13 @@ export default function OverdueReport() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-700">
+                <label className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">
                   Sort Direction
                 </label>
                 <select
                   value={sortDirection}
                   onChange={(event) => setSortDirection(event.target.value)}
-                  className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
+                  className="block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)] mt-2"
                 >
                   <option value="desc">Descending</option>
                   <option value="asc">Ascending</option>
@@ -465,20 +463,20 @@ export default function OverdueReport() {
             </div>
           </div>
 
-          <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-bold text-slate-900">
+          <div className="mt-8 border-y border-ink/10 bg-paper/80 py-6">
+            <h2 className="text-xl font-bold text-ink-deep">
               Monthly Operational Activity
             </h2>
 
-            <div className="mt-6 overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+            <div className="mt-6 overflow-x-auto rounded-xl border border-ink/10">
               {filteredActivities.length === 0 ? (
-                <div className="p-5 text-center font-medium text-slate-500 bg-white">
+                <div className="p-5 text-center font-medium text-ink/50 bg-white">
                   No operational records found for the selected filters.
                 </div>
               ) : (
                 <table className="min-w-full text-left text-sm">
                   <thead>
-                    <tr className="bg-slate-100 text-left text-sm text-slate-700 border-b border-slate-200">
+                    <tr className="bg-mist text-left text-sm text-ink/70 border-b border-ink/10">
                       <th className="px-4 py-3 font-semibold">Activity Type</th>
                       <th className="px-4 py-3 font-semibold">Record ID</th>
                       <th className="px-4 py-3 font-semibold">Item ID</th>
@@ -494,23 +492,23 @@ export default function OverdueReport() {
                     {filteredActivities.map((row, index) => (
                       <tr
                         key={`${row.activityType}-${row.recordId}-${index}`}
-                        className="border-b border-slate-100 bg-white text-slate-600 hover:bg-slate-50 transition-colors"
+                        className="border-b border-ink/10 bg-white text-ink/65 hover:bg-mist/80 transition-colors"
                       >
-                        <td className="px-4 py-3 font-bold text-sky-700">
+                        <td className="px-4 py-3 font-bold text-ink-soft">
                           {row.activityType || "-"}
                         </td>
-                        <td className="px-4 py-3 font-medium text-slate-900">
+                        <td className="px-4 py-3 font-medium text-ink-deep">
                           {row.recordId ?? "-"}
                         </td>
                         <td className="px-4 py-3 font-medium">
                           {row.itemId ?? "-"}
                         </td>
-                        <td className="px-4 py-3 font-semibold text-slate-900">
+                        <td className="px-4 py-3 font-semibold text-ink-deep">
                           {row.title || "-"}
                         </td>
                         <td className="px-4 py-3">
                           {row.patronName
-                            ? <>{row.patronName} <span className="text-slate-400">{row.patronId ? `(${row.patronId})` : ""}</span></>
+                            ? <>{row.patronName} <span className="text-ink/40">{row.patronId ? `(${row.patronId})` : ""}</span></>
                             : "-"}
                         </td>
                         <td className="px-4 py-3">
@@ -521,7 +519,7 @@ export default function OverdueReport() {
                         <td className="px-4 py-3">
                           {row.status || "-"}
                         </td>
-                        <td className="px-4 py-3 text-slate-500">
+                        <td className="px-4 py-3 text-ink/50">
                           {row.details || "-"}
                         </td>
                       </tr>

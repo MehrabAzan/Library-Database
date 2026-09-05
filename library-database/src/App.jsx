@@ -46,9 +46,11 @@ import { MessageProvider } from "./context/MessageContext.jsx";
 import NotificationBell from "./components/NotificationBell.jsx";
 
 function AccountRouter({ patronPage, staffPage }) {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = ReadStoredUser();
 
-  if (!user) return null;
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
 
   return user.user_type === "patron" ? patronPage : staffPage;
 }
@@ -59,7 +61,7 @@ function MenuLink({ to, label, description, onNavigate }) {
       to={to}
       onClick={onNavigate}
       className={({ isActive }) =>
-        `dh-menu-link ${isActive ? "dh-menu-link-active" : "dh-menu-link-idle"}`
+        `block rounded-[0.4rem] border border-transparent px-[0.85rem] py-[0.8rem] text-sm transition-colors ${isActive ? "border-transparent bg-ink text-paper" : "text-ink hover:border-ink/10 hover:bg-white"}`
       }
     >
       {({ isActive }) => (
@@ -85,7 +87,7 @@ function PublicNavLink({ to, label }) {
     <NavLink
       to={to}
       className={({ isActive }) =>
-        `dh-nav-link ${isActive ? "dh-nav-link-active" : ""}`
+        `relative rounded-md px-[0.7rem] py-[0.45rem] text-sm font-semibold text-ink/80 transition-colors hover:bg-ink/5 hover:text-ink ${isActive ? "bg-ink-soft/10 text-ink" : ""}`
       }
     >
       {label}
@@ -210,9 +212,9 @@ function App() {
   return (
     <MessageProvider>
       <BrowserRouter>
-        <div className="dh-shell">
-          <header className="dh-header">
-            <div className="dh-utility-bar px-4 py-2 sm:px-6">
+        <div className="flex min-h-screen flex-col text-ink">
+          <header className="sticky top-0 z-30 border-b border-ink/10 bg-paper/90 shadow-[0_1px_0_rgb(184_137_45_/_0.18)] backdrop-blur-md">
+            <div className="hidden bg-ink-deep text-xs font-medium text-paper/90 sm:block px-4 py-2 sm:px-6">
               <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-4">
                 <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
                   <span>100 Innovation Drive, Tech District</span>
@@ -233,7 +235,7 @@ function App() {
                 <div className="flex min-w-0 items-center gap-3">
                   <button
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    className="dh-btn dh-btn-secondary !px-3 !py-2"
+                    className="inline-flex items-center justify-center gap-2 rounded-lg px-[1.15rem] py-[0.65rem] text-sm font-semibold leading-tight transition-[background-color,color,border-color,transform] duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass active:enabled:translate-y-px disabled:cursor-not-allowed disabled:opacity-50 border border-ink/20 bg-transparent text-ink hover:enabled:border-ink/35 hover:enabled:bg-ink/5 !px-3 !py-2"
                     aria-controls="library-navigation"
                     aria-expanded={isSidebarOpen}
                     aria-label={
@@ -266,7 +268,7 @@ function App() {
                   >
                     <img
                       src="/Datahaven.jpg"
-                      className="dh-brand-mark"
+                      className="h-12 w-12 rounded-[0.4rem] border border-ink/15 bg-white object-cover"
                       alt="Datahaven Libraries logo"
                     />
                     <div className="min-w-0">
@@ -290,7 +292,7 @@ function App() {
                 </nav>
 
                 {!user ? (
-                  <NavLink to="/login" className="dh-btn dh-btn-primary shrink-0">
+                  <NavLink to="/login" className="inline-flex items-center justify-center gap-2 rounded-lg px-[1.15rem] py-[0.65rem] text-sm font-semibold leading-tight transition-[background-color,color,border-color,transform] duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass active:enabled:translate-y-px disabled:cursor-not-allowed disabled:opacity-50 bg-ink text-paper hover:enabled:bg-ink-soft shrink-0">
                     Log in
                   </NavLink>
                 ) : (
@@ -302,7 +304,7 @@ function App() {
                         {user.first_name || "User"}
                       </span>
                     </span>
-                    <NavLink to="/logout" className="dh-btn dh-btn-secondary !py-1.5">
+                    <NavLink to="/logout" className="inline-flex items-center justify-center gap-2 rounded-lg px-[1.15rem] py-[0.65rem] text-sm font-semibold leading-tight transition-[background-color,color,border-color,transform] duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass active:enabled:translate-y-px disabled:cursor-not-allowed disabled:opacity-50 border border-ink/20 bg-transparent text-ink hover:enabled:border-ink/35 hover:enabled:bg-ink/5 !py-1.5">
                       Logout
                     </NavLink>
                   </div>
@@ -342,7 +344,7 @@ function App() {
                   <button
                     type="button"
                     onClick={() => setIsSidebarOpen(false)}
-                    className="dh-btn dh-btn-secondary !px-3 !py-1.5 text-xs lg:hidden"
+                    className="inline-flex items-center justify-center gap-2 rounded-lg px-[1.15rem] py-[0.65rem] text-sm font-semibold leading-tight transition-[background-color,color,border-color,transform] duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass active:enabled:translate-y-px disabled:cursor-not-allowed disabled:opacity-50 border border-ink/20 bg-transparent text-ink hover:enabled:border-ink/35 hover:enabled:bg-ink/5 !px-3 !py-1.5 text-xs lg:hidden"
                   >
                     Close
                   </button>
@@ -432,7 +434,7 @@ function App() {
 
                   <Route path="/report" element={<Report />} />
                   <Route
-                    path="/report/PopularityReport"
+                    path="/report/popularityreport"
                     element={<PopularityReport />}
                   />
                   <Route
@@ -455,13 +457,13 @@ function App() {
             </main>
           </div>
 
-          <footer className="border-t border-ink/10 bg-ink-deep px-4 py-10 text-sm text-paper/80 sm:px-6">
+          <footer className="relative border-t border-ink/10 bg-[radial-gradient(ellipse_60%_80%_at_0%_0%,rgb(95_143_138_/_0.18),transparent_55%),var(--color-ink-deep)] before:absolute before:inset-x-0 before:top-0 before:h-[3px] before:bg-[linear-gradient(90deg,var(--color-brass-deep),var(--color-brass-soft),transparent_70%)] before:content-[''] px-4 py-10 text-sm text-paper/80 sm:px-6">
             <div className="mx-auto grid w-full max-w-[1440px] gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
               <div>
                 <div className="flex items-center gap-3">
                   <img
                     src="/Datahaven.jpg"
-                    className="dh-brand-mark border-paper/20"
+                    className="h-12 w-12 rounded-[0.4rem] border border-ink/15 bg-white object-cover border-paper/20"
                     alt="Datahaven Libraries logo"
                   />
                   <div>

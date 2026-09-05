@@ -37,12 +37,13 @@ export default function Books() {
   }, []);
 
   return (
-    <section className="rounded-xl bg-slate-100/40 border border-slate-200 p-2 inset-shadow-sm">
-      <div className="flex text-center items-center justify-between align-center flex-wrap">
-        <h2 className="text-3xl font-semibold tracking-tight text-slate-900">
-          Book Entry
-        </h2>
-        <p className="max-w-2xl text-base leading-7 text-slate-600">
+    <section className="border-y border-ink/10 bg-paper/80 py-6 px-2">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-brass-deep">Catalog entry</p>
+          <h2 className="font-display text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-tight text-ink-deep mt-2 text-3xl">Book Entry</h2>
+        </div>
+        <p className="max-w-md text-sm leading-6 text-ink/65">
           Enter book information below.
         </p>
       </div>
@@ -126,7 +127,7 @@ export default function Books() {
                 </>
               )}
               {!loading && error && (
-                <div className="w-full rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                <div className="w-full rounded-lg border border-danger/25 bg-danger/10 px-4 py-3 text-sm text-danger">
                   {error}
                 </div>
               )}
@@ -169,7 +170,7 @@ export default function Books() {
                 placeholder="Brief summary of the book..."
               />
 
-              <div className="mt-7 rounded-2xl border-2 border-dashed border-slate-200 p-4 bg-slate-50/50">
+              <div className="mt-7 border border-dashed border-ink/20 bg-mist/40 p-4">
                 <FileUploadField
                   id="coverImageFile"
                   label="Upload Cover Image (Optional)"

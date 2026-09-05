@@ -7,8 +7,8 @@ export default function Registration() {
   const { showSuccess, showError } = useMessage();
 
   return (
-    <section className="dh-auth-panel dh-auth-panel-wide">
-      <p className="dh-kicker text-center">Membership</p>
+    <section className="mx-auto w-full max-w-3xl border-t-[3px] border-brass bg-white/80 px-6 py-8 shadow-soft sm:px-9 sm:py-10 sm:pb-12">
+      <p className="text-xs font-bold uppercase tracking-[0.16em] text-brass-deep text-center">Membership</p>
       <h1 className="mt-2 text-center font-display text-3xl font-semibold tracking-tight text-ink-deep sm:text-4xl">
         Get a library card
       </h1>
@@ -48,7 +48,7 @@ export default function Registration() {
         <div className="space-y-6">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             <div>
-              <label htmlFor="firstname" className="dh-label">
+              <label htmlFor="firstname" className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">
                 First name
               </label>
               <input
@@ -57,12 +57,12 @@ export default function Registration() {
                 name="firstname"
                 type="text"
                 placeholder="Jane"
-                className="dh-input"
+                className="block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)]"
                 autoComplete="given-name"
               />
             </div>
             <div>
-              <label htmlFor="lastname" className="dh-label">
+              <label htmlFor="lastname" className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">
                 Last name
               </label>
               <input
@@ -71,12 +71,12 @@ export default function Registration() {
                 name="lastname"
                 type="text"
                 placeholder="Doe"
-                className="dh-input"
+                className="block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)]"
                 autoComplete="family-name"
               />
             </div>
             <div>
-              <label htmlFor="birthday" className="dh-label">
+              <label htmlFor="birthday" className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">
                 Date of birth
               </label>
               <input
@@ -84,14 +84,14 @@ export default function Registration() {
                 id="birthday"
                 name="birthday"
                 type="date"
-                className="dh-input"
+                className="block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)]"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
-              <label htmlFor="email" className="dh-label">
+              <label htmlFor="email" className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">
                 Email address
               </label>
               <input
@@ -100,12 +100,12 @@ export default function Registration() {
                 name="email"
                 type="email"
                 placeholder="jane@example.com"
-                className="dh-input"
+                className="block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)]"
                 autoComplete="email"
               />
             </div>
             <div>
-              <label htmlFor="password" className="dh-label">
+              <label htmlFor="password" className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">
                 Password
               </label>
               <input
@@ -114,7 +114,7 @@ export default function Registration() {
                 name="password"
                 type="password"
                 placeholder="Min. 8 characters"
-                className="dh-input"
+                className="block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)]"
                 autoComplete="new-password"
               />
             </div>
@@ -129,7 +129,7 @@ export default function Registration() {
 
             <p className="mt-8 text-sm text-ink/60">
               Already have an account?{" "}
-              <Link to="/login" className="dh-link">
+              <Link to="/login" className="font-semibold text-ink-soft underline decoration-ink-soft/35 underline-offset-[0.18em] transition-[color,text-decoration-color] duration-150 hover:text-ink hover:decoration-brass">
                 Sign in here
               </Link>
             </p>

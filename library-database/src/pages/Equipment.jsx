@@ -5,17 +5,20 @@ import { FetchJson } from "../api";
 export default function Equipment() {
   const { showSuccess, showError } = useMessage();
   return (
-    <section className="rounded-xl bg-slate-100/40 border border-gray-100 p-2 inset-shadow-sm">
-      <div className="flex align-center text-center justify-between text-center">
-        <h2 className="text-3xl font-semibold tracking-tight text-slate-900">
-          Equipment Entry
-        </h2>
-        <span className="max-w-2xl text-base leading-7 text-slate-600">
-          Enter equipment information below.
-        </span>
-        <span className="max-w-2xl text-base leading-7 text-slate-500/80 italic">
-          Image upload is not enabled for equipment yet.
-        </span>
+    <section className="border-y border-ink/10 bg-paper/80 py-6 px-2">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-brass-deep">Catalog entry</p>
+          <h2 className="font-display text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-tight text-ink-deep mt-2 text-3xl">Equipment Entry</h2>
+        </div>
+        <div className="max-w-md space-y-1 text-right">
+          <p className="text-sm leading-6 text-ink/65">
+            Enter equipment information below.
+          </p>
+          <p className="text-xs italic text-ink/50">
+            Image upload is not enabled for equipment yet.
+          </p>
+        </div>
       </div>
       <div className="flex gap-4 flex-wrap justify-evenly mt-4">
         <form
@@ -53,7 +56,7 @@ export default function Equipment() {
               <div className="col-span-2">
                 <label
                   htmlFor="title"
-                  className="block text-sm font-bold text-slate-700 uppercase tracking-wide mb-2"
+                  className="block text-sm font-bold text-ink/70 uppercase tracking-wide mb-2"
                 >
                   Name
                 </label>
@@ -63,14 +66,14 @@ export default function Equipment() {
                     id="title"
                     name="title"
                     placeholder="e.g. Sony Camera"
-                    className="block w-full rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 shadow-sm outline-none focus:ring-2 focus:ring-sky-500 transition-all"
+                    className="block w-full rounded-lg border border-ink/20 bg-white px-4 py-2 text-sm text-ink-deep outline-none focus:ring-2 focus:ring-ink-soft transition-all"
                   />
                 </div>
               </div>
               <div className="sm:col-span-1">
                 <label
                   htmlFor="available"
-                  className="block text-sm font-bold text-slate-700 uppercase tracking-wide mb-2"
+                  className="block text-sm font-bold text-ink/70 uppercase tracking-wide mb-2"
                 >
                   Copies
                 </label>
@@ -82,7 +85,7 @@ export default function Equipment() {
                     name="available"
                     placeholder="1"
                     min="1"
-                    className="block w-full rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 shadow-sm outline-none focus:ring-2 focus:ring-sky-500 transition-all"
+                    className="block w-full rounded-lg border border-ink/20 bg-white px-4 py-2 text-sm text-ink-deep outline-none focus:ring-2 focus:ring-ink-soft transition-all"
                   />
                 </div>
               </div>

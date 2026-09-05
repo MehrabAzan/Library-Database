@@ -36,12 +36,13 @@ export default function Periodicals() {
   }, []);
 
   return (
-    <section className="rounded-xl bg-slate-100/40 border border-gray-100 p-2 inset-shadow-sm">
-      <div className="flex text-center items-center justify-between align-center flex-wrap">
-        <h2 className="text-3xl font-semibold tracking-tight text-slate-900">
-          Periodical Entry
-        </h2>
-        <p className="max-w-2xl text-base leading-7 text-slate-600">
+    <section className="border-y border-ink/10 bg-paper/80 py-6 px-2">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-brass-deep">Catalog entry</p>
+          <h2 className="font-display text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-tight text-ink-deep mt-2 text-3xl">Periodical Entry</h2>
+        </div>
+        <p className="max-w-md text-sm leading-6 text-ink/65">
           Enter periodical information below.
         </p>
       </div>
@@ -115,7 +116,7 @@ export default function Periodicals() {
               <div className="col-span-2">
                 <label
                   htmlFor="title"
-                  className="block text-sm font-bold text-slate-700 uppercase tracking-wide mb-2"
+                  className="block text-sm font-bold text-ink/70 uppercase tracking-wide mb-2"
                 >
                   Title
                 </label>
@@ -124,13 +125,13 @@ export default function Periodicals() {
                   id="title"
                   name="title"
                   placeholder="Periodical Title"
-                  className="block w-full rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 shadow-sm outline-none focus:ring-2 focus:ring-sky-500 transition-all"
+                  className="block w-full rounded-lg border border-ink/20 bg-white px-4 py-2 text-sm text-ink-deep outline-none focus:ring-2 focus:ring-ink-soft transition-all"
                 />
               </div>
               <div className="col-span-1">
                 <label
                   htmlFor="available"
-                  className="block text-sm font-bold text-slate-700 uppercase tracking-wide mb-2"
+                  className="block text-sm font-bold text-ink/70 uppercase tracking-wide mb-2"
                 >
                   Copies
                 </label>
@@ -141,13 +142,13 @@ export default function Periodicals() {
                   name="available"
                   placeholder="Copy Count"
                   min="1"
-                  className="block w-full rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 shadow-sm outline-none focus:ring-2 focus:ring-sky-500 transition-all"
+                  className="block w-full rounded-lg border border-ink/20 bg-white px-4 py-2 text-sm text-ink-deep outline-none focus:ring-2 focus:ring-ink-soft transition-all"
                 />
               </div>
               <div className="col-span-1">
                 <label
                   htmlFor="shelfnumber"
-                  className="block text-sm font-bold text-slate-700 uppercase tracking-wide mb-2"
+                  className="block text-sm font-bold text-ink/70 uppercase tracking-wide mb-2"
                 >
                   Shelf
                 </label>
@@ -158,7 +159,7 @@ export default function Periodicals() {
                   name="shelfnumber"
                   placeholder="Shelf No."
                   min="1"
-                  className="block w-full rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 shadow-sm outline-none focus:ring-2 focus:ring-sky-500 transition-all"
+                  className="block w-full rounded-lg border border-ink/20 bg-white px-4 py-2 text-sm text-ink-deep outline-none focus:ring-2 focus:ring-ink-soft transition-all"
                 />
               </div>
             </div>
@@ -173,7 +174,7 @@ export default function Periodicals() {
                 </>
               )}
               {!loading && error && (
-                <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                <div className="rounded-lg border border-danger/25 bg-danger/10 px-4 py-3 text-sm text-danger">
                   {error}
                 </div>
               )}
@@ -191,7 +192,7 @@ export default function Periodicals() {
               <div className="col-span-2">
                 <label
                   htmlFor="publisher"
-                  className="block text-sm font-bold text-slate-700 uppercase tracking-wide mb-2"
+                  className="block text-sm font-bold text-ink/70 uppercase tracking-wide mb-2"
                 >
                   Publisher
                 </label>
@@ -200,13 +201,13 @@ export default function Periodicals() {
                   id="publisher"
                   name="publisher"
                   placeholder="Publishing Co."
-                  className="block w-full rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 shadow-sm outline-none focus:ring-2 focus:ring-sky-500 transition-all"
+                  className="block w-full rounded-lg border border-ink/20 bg-white px-4 py-2 text-sm text-ink-deep outline-none focus:ring-2 focus:ring-ink-soft transition-all"
                 />
               </div>
               <div className="col-span-1">
                 <label
                   htmlFor="publicationdate"
-                  className="block text-sm font-bold text-slate-700 uppercase tracking-wide mb-2"
+                  className="block text-sm font-bold text-ink/70 uppercase tracking-wide mb-2"
                 >
                   Release Date
                 </label>
@@ -215,7 +216,7 @@ export default function Periodicals() {
                   id="publicationdate"
                   name="publicationdate"
                   type="date"
-                  className="block w-full rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 shadow-sm outline-none focus:ring-2 focus:ring-sky-500 transition-all"
+                  className="block w-full rounded-lg border border-ink/20 bg-white px-4 py-2 text-sm text-ink-deep outline-none focus:ring-2 focus:ring-ink-soft transition-all"
                 />
               </div>
             </div>
@@ -224,7 +225,7 @@ export default function Periodicals() {
               <div>
                 <label
                   htmlFor="summary"
-                  className="block text-sm font-bold text-slate-700 uppercase tracking-wide mb-2"
+                  className="block text-sm font-bold text-ink/70 uppercase tracking-wide mb-2"
                 >
                   Summary
                 </label>
@@ -234,11 +235,11 @@ export default function Periodicals() {
                   name="summary"
                   rows="5"
                   placeholder="Brief description..."
-                  className="block w-full rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 shadow-sm outline-none focus:ring-2 focus:ring-sky-500 transition-all"
+                  className="block w-full rounded-lg border border-ink/20 bg-white px-4 py-2 text-sm text-ink-deep outline-none focus:ring-2 focus:ring-ink-soft transition-all"
                 />
               </div>
               {/* File Upload */}
-              <div className="rounded-2xl mt-7 border-2 border-dashed border-slate-200 p-4 bg-slate-50/50">
+              <div className="rounded-lg mt-7 border-2 border-dashed border-ink/10 p-4 bg-mist/50">
                 <FileUploadField
                   id="coverImageFile"
                   label="Cover Image"

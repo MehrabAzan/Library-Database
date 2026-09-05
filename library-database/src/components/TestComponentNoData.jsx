@@ -4,7 +4,7 @@ export default function TestComponentNoData() {
       <h2 className="text-2xl font-semibold tracking-tight text-white">
         This is a test component!
       </h2>
-      <p className="mt-2 text-base leading-7 text-slate-200">
+      <p className="mt-2 text-base leading-7 text-paper/80">
         It has no parameters.
       </p>
     </div>

@@ -26,7 +26,7 @@ export default function Fine({ data, onPay, payPending = false }) {
             {data.title}
           </h2>
           {data.creator ? (
-            <p className="text-sm text-sky-300">
+            <p className="text-sm text-seafoam">
               {data.creator}
             </p>
           ) : null}
@@ -37,7 +37,7 @@ export default function Fine({ data, onPay, payPending = false }) {
         </h2>
       )}
 
-      <div className="mt-4 space-y-1 text-sm text-slate-200">
+      <div className="mt-4 space-y-1 text-sm text-paper/80">
         <p>
           Total Fine: {FormatCurrency(fineAmount)}
         </p>

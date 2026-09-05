@@ -17,14 +17,14 @@ export default function Logout() {
   }, [showInfo]);
 
   return (
-    <section className="mx-auto flex w-full max-w-lg flex-col items-center rounded-3xl border border-slate-100 bg-white p-8 text-center shadow-lg">
-      <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-900">
-        Logout
-      </p >
-      <h1 className="mt-3 text-3xl font-semibold text-slate-900">Logging out...</h1>
-      <p className="mt-4 text-slate-600">
+    <section className="mx-auto w-full max-w-md border-t-[3px] border-brass bg-white/80 px-6 py-8 shadow-soft sm:px-9 sm:py-10 sm:pb-12 text-center">
+      <p className="text-xs font-bold uppercase tracking-[0.16em] text-brass-deep">Session</p>
+      <h1 className="mt-2 font-display text-3xl font-semibold text-ink-deep">
+        Logging out...
+      </h1>
+      <p className="mt-4 text-sm leading-6 text-ink/65">
         Your session has ended. Redirecting to login page.
-      </p >
+      </p>
     </section>
   );
 }

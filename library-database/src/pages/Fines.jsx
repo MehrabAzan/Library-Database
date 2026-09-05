@@ -186,23 +186,28 @@ export default function Fines() {
   );
 
   return (
-    <section className="space-y-2 pt-2 rounded-xl bg-slate-100/40  border border-gray-100 p-4 inset-shadow-sm ">
-      <h2 className="text-3xl font-semibold tracking-tight text-slate-800">
-        Fines
-      </h2>
+    <section className="space-y-6">
+      <div>
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-brass-deep">Balances</p>
+        <h2 className="font-display text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-tight text-ink-deep mt-2 text-3xl">Fines</h2>
+      </div>
 
       {!loading && !error ? (
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          <div className="rounded-2xl border border-slate-200 bg-white  p-4">
-            <h3 className="text-lg font-bold text-slate-900">Open Balance</h3>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">
+        <div className="mt-2 grid gap-0 border-y border-ink/10 sm:grid-cols-2">
+          <div className="border-b border-ink/10 bg-paper/80 p-5 sm:border-b-0 sm:border-r">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-ink/50">
+              Open Balance
+            </h3>
+            <p className="mt-2 font-display text-2xl font-semibold text-ink-deep">
               {FormatMoney(outstandingBalance)}
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-4">
-            <h3 className="text-lg font-bold text-slate-900">Fine Records</h3>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">
+          <div className="bg-paper/80 p-5">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-ink/50">
+              Fine Records
+            </h3>
+            <p className="mt-2 font-display text-2xl font-semibold text-ink-deep">
               {fines.length}
             </p>
           </div>
@@ -210,17 +215,17 @@ export default function Fines() {
       ) : null}
 
       {loading ? (
-        <p className="mt-6 text-slate-600 font-medium">Loading fines...</p>
+        <p className="mt-6 text-ink/65 font-medium">Loading fines...</p>
       ) : null}
 
       {!loading && error ? (
-        <p className="mt-6 text-rose-600 font-medium">{error}</p>
+        <p className="mt-6 text-danger font-medium">{error}</p>
       ) : null}
 
       {!loading && !error ? (
         <div className="mt-6 flex flex-col gap-4">
           {fines.length === 0 ? (
-            <p className="text-slate-600 font-medium">No fines found.</p>
+            <p className="text-ink/65 font-medium">No fines found.</p>
           ) : (
             fines.map((fine) => {
               const status = NormalizeStatus(fine);
@@ -235,26 +240,26 @@ export default function Fines() {
               return (
                 <div
                   key={fine.fineId}
-                  className={`rounded-2xl border transition-all bg-white duration-300 p-5 ${isExpanded ? "border-sky-300 bg-slate-50 shadow-md shadow-sky-100" : "border-slate-200 bg-slate-50 hover:border-sky-200"}`}
+                  className={`border bg-paper/80 p-5 transition-all duration-300 ${isExpanded ? "border-ink-soft" : "border-ink/10 hover:border-ink/25"}`}
                 >
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                     <div className="space-y-2">
-                      <div className="text-sm font-semibold text-slate-500">
+                      <div className="text-sm font-semibold text-ink/50">
                         Fine ID #{fine.fineId}
                       </div>
 
-                      <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-slate-900">
+                      <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-ink-deep">
                         <span>Total: {FormatMoney(fineAmount)}</span>
                         <span>Paid: {FormatMoney(paidAmount)}</span>
                         <span
-                          className={remainingAmount > 0 ? "text-rose-600" : ""}
+                          className={remainingAmount > 0 ? "text-danger" : ""}
                         >
                           Remaining: {FormatMoney(remainingAmount)}
                         </span>
                         <span>Status: {status}</span>
                       </div>
 
-                      <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-600">
+                      <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink/65">
                         {fine.assignedDate ? (
                           <span>
                             Assigned: {FormatDateValue(fine.assignedDate)}
@@ -280,7 +285,7 @@ export default function Fines() {
                         <button
                           type="button"
                           onClick={() => OpenPaymentBox(fine)}
-                          className="rounded-full border border-[#244c5a]/30 bg-[#244c5a]/10 px-4 py-2 text-sm font-medium text-[#244c5a] transition hover:border-[#244c5a] hover:bg-[#244c5a]/20"
+                          className="inline-flex items-center justify-center gap-2 rounded-lg px-[1.15rem] py-[0.65rem] text-sm font-semibold leading-tight transition-[background-color,color,border-color,transform] duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass active:enabled:translate-y-px disabled:cursor-not-allowed disabled:opacity-50 border border-ink/20 bg-transparent text-ink hover:enabled:border-ink/35 hover:enabled:bg-ink/5"
                         >
                           Pay Fine
                         </button>
@@ -288,7 +293,7 @@ export default function Fines() {
                         <button
                           type="button"
                           disabled
-                          className="rounded-full border border-slate-200 bg-slate-100 px-4 py-2 text-sm font-medium text-slate-500"
+                          className="inline-flex items-center justify-center gap-2 rounded-lg px-[1.15rem] py-[0.65rem] text-sm font-semibold leading-tight transition-[background-color,color,border-color,transform] duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass active:enabled:translate-y-px disabled:cursor-not-allowed disabled:opacity-50 border border-ink/20 bg-transparent text-ink hover:enabled:border-ink/35 hover:enabled:bg-ink/5 opacity-50"
                         >
                           {status === "Waived" ? "Waived" : "Paid"}
                         </button>
@@ -297,10 +302,10 @@ export default function Fines() {
                   </div>
 
                   {isExpanded ? (
-                    <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                      <p className="text-sm font-medium text-slate-600">
+                    <div className="mt-5 border border-ink/10 bg-mist/40 p-5">
+                      <p className="text-sm font-medium text-ink/65">
                         Enter payment amount up to{" "}
-                        <span className="text-slate-900 font-bold">
+                        <span className="font-bold text-ink-deep">
                           {FormatMoney(remainingAmount)}
                         </span>
                         .
@@ -316,7 +321,7 @@ export default function Fines() {
                             setPaymentAmount(event.target.value)
                           }
                           placeholder="Payment amount"
-                          className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-slate-900 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all sm:max-w-xs"
+                          className="block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)] sm:max-w-xs"
                         />
 
                         <div className="flex gap-2">
@@ -324,7 +329,7 @@ export default function Fines() {
                             type="button"
                             onClick={() => PayFine(fine)}
                             disabled={isPending}
-                            className="rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 transition hover:border-emerald-300 hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60"
+                            className="inline-flex items-center justify-center gap-2 rounded-lg px-[1.15rem] py-[0.65rem] text-sm font-semibold leading-tight transition-[background-color,color,border-color,transform] duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass active:enabled:translate-y-px disabled:cursor-not-allowed disabled:opacity-50 bg-ink text-paper hover:enabled:bg-ink-soft"
                           >
                             {isPending ? "Processing..." : "Confirm Payment"}
                           </button>
@@ -333,7 +338,7 @@ export default function Fines() {
                             type="button"
                             onClick={ClosePaymentBox}
                             disabled={isPending}
-                            className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                            className="inline-flex items-center justify-center gap-2 rounded-lg px-[1.15rem] py-[0.65rem] text-sm font-semibold leading-tight transition-[background-color,color,border-color,transform] duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass active:enabled:translate-y-px disabled:cursor-not-allowed disabled:opacity-50 border border-ink/20 bg-transparent text-ink hover:enabled:border-ink/35 hover:enabled:bg-ink/5"
                           >
                             Cancel
                           </button>

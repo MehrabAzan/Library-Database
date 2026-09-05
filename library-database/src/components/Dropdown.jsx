@@ -1,6 +1,6 @@
 export default function Dropdown({ name, options }) {
-  const inputClasses = "block w-full rounded-2xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:ring-2 focus:ring-sky-500 transition-all";
-  const labelClasses = "block text-sm font-bold text-slate-700 uppercase tracking-wide mb-2";
+  const inputClasses = "block w-full rounded-2xl border border-ink/20 bg-white px-3 py-2 text-sm text-ink-deep shadow-sm outline-none focus:ring-2 focus:ring-ink-soft transition-all";
+  const labelClasses = "block text-sm font-bold text-ink/80 uppercase tracking-wide mb-2";
 
   return (
     <div>
@@ -15,7 +15,7 @@ export default function Dropdown({ name, options }) {
             <option
               key={index}
               value={option}
-              className="text-slate-900"
+              className="text-ink-deep"
             >
               {option}
             </option>
@@ -27,8 +27,8 @@ export default function Dropdown({ name, options }) {
 }
 
 export function DisabledDropdown({ name }) {
-  const inputClasses = "block w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-400 shadow-sm outline-none cursor-not-allowed";
-  const labelClasses = "block text-sm font-bold text-slate-400 uppercase tracking-wide mb-2";
+  const inputClasses = "block w-full rounded-2xl border border-ink/15 bg-mist px-3 py-2 text-sm text-ink/40 shadow-sm outline-none cursor-not-allowed";
+  const labelClasses = "block text-sm font-bold text-ink/40 uppercase tracking-wide mb-2";
 
   return (
     <div>
@@ -47,12 +47,20 @@ export function DisabledDropdown({ name }) {
 }
 
 export function ObjectDropdown({ name, options }) {
-  const inputClasses = "block w-full rounded-2xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:ring-2 focus:ring-sky-500 transition-all";
-  const labelClasses = "block text-sm font-bold text-slate-700 uppercase tracking-wide mb-2";
+  const inputClasses = "block w-full rounded-2xl border border-ink/20 bg-white px-3 py-2 text-sm text-ink-deep shadow-sm outline-none focus:ring-2 focus:ring-ink-soft transition-all";
+  const labelClasses = "block text-sm font-bold text-ink/80 uppercase tracking-wide mb-2";
 
-  const keys = Object.keys(options[0]);
+  if (!Array.isArray(options) || options.length === 0) {
+    return <DisabledDropdown name={name} />;
+  }
+
+  const keys = Object.keys(options[0] ?? {});
   const code = keys[0];
-  const term = keys[1];
+  const term = keys[1] ?? keys[0];
+
+  if (!code) {
+    return <DisabledDropdown name={name} />;
+  }
 
   return (
     <div>
@@ -69,7 +77,7 @@ export function ObjectDropdown({ name, options }) {
               <option
                 key={option[code]}
                 value={option[code]}
-                className="text-slate-900"
+                className="text-ink-deep"
               >
                 {option[term]}
               </option>

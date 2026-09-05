@@ -127,7 +127,7 @@ function BuildSortValue(fine, sortBy) {
 
 function StatusCard({ title, count, amount, colorClasses }) {
   return (
-    <div className={`rounded-2xl border p-4 ${colorClasses}`}>
+    <div className={`rounded-lg border p-4 ${colorClasses}`}>
       <p className="text-xs font-semibold uppercase tracking-[0.25em]">{title}</p>
       <p className="mt-3 text-3xl font-semibold">{count}</p>
       <p className="mt-2 text-sm opacity-90">{FormatMoney(amount)}</p>
@@ -137,11 +137,11 @@ function StatusCard({ title, count, amount, colorClasses }) {
 
 function SummaryCard({ title, value }) {
   return (
-    <div className="rounded-2xl border border-slate-100 bg-slate-50 p-6">
-      <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-600">
+    <div className="rounded-lg border border-ink/10 bg-mist/60 p-6">
+      <p className="text-xs font-semibold uppercase tracking-[0.25em] text-ink/65">
         {title}
       </p>
-      <p className="mt-3 text-3xl font-semibold text-slate-900">
+      <p className="mt-3 text-3xl font-semibold text-ink-deep">
         {value}
       </p>
     </div>
@@ -158,7 +158,7 @@ function FormatDateLabel(value) {
 }
 
 const inputClassName =
-  "mt-2 block w-full rounded-md bg-white px-3 py-1.5 outline-1 -outline-offset-1 outline-slate-200 focus:outline-2 focus:-outline-offset-2 focus:outline-[#244c5a] sm:text-sm/6";
+  "block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)] mt-2";
 
 export default function FineSummaryReport() {
   const { showError, showWarning, showInfo } = useMessage();
@@ -432,31 +432,29 @@ export default function FineSummaryReport() {
 
   return (
     <section className="space-y-6">
-      <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-600">
+      <p className="text-sm font-semibold uppercase tracking-[0.3em] text-ink/65">
         Admin Report
       </p>
 
-      <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-900">
-        Fine Summary Report
-      </h1>
+      <h1 className="font-display text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-tight text-ink-deep mt-2 text-4xl">Fine Summary Report</h1>
 
-      <p className="mt-3 text-sm font-medium text-slate-600">
+      <p className="mt-3 text-sm font-medium text-ink/65">
         Note: All dates in this report refer to the date the fine was generated (the day the item became overdue).
       </p>
 
-      <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600">
+      <p className="mt-4 max-w-3xl text-base leading-7 text-ink/65">
         Review fine totals, unpaid balances, status breakdowns, and detailed
         fine records with flexible filters.
       </p>
 
       {isLoading ? (
-        <div className="mt-8 text-slate-600">
+        <div className="mt-8 text-ink/65">
           Loading fine summary report...
         </div>
       ) : (
         <>
           <div className="mt-8">
-            <p className="text-sm font-medium text-slate-600">
+            <p className="text-sm font-medium text-ink/65">
               {dateRangeLabel}
             </p>
           </div>
@@ -482,12 +480,12 @@ export default function FineSummaryReport() {
 
           <div className="mt-8">
             <div className="flex items-center justify-between gap-4">
-              <h2 className="text-xl font-semibold text-slate-900">
+              <h2 className="text-xl font-semibold text-ink-deep">
                 Status Breakdown
               </h2>
             </div>
 
-            <p className="mt-2 text-sm font-medium text-slate-600">
+            <p className="mt-2 text-sm font-medium text-ink/65">
               {dateRangeLabel}
             </p>
 
@@ -503,40 +501,40 @@ export default function FineSummaryReport() {
                 title="Overdue"
                 count={statusBreakdown.Overdue.count}
                 amount={statusBreakdown.Overdue.amount}
-                colorClasses="border-rose-200 bg-rose-50 text-rose-800"
+                colorClasses="border-danger/25 bg-danger/10 text-danger"
               />
 
               <StatusCard
                 title="Returned but unpaid"
                 count={statusBreakdown["Returned but unpaid"].count}
                 amount={statusBreakdown["Returned but unpaid"].amount}
-                colorClasses="border-amber-200 bg-amber-50 text-amber-800"
+                colorClasses="border-brass/25 bg-brass/10 text-brass-deep"
               />
 
               <StatusCard
                 title="Paid"
                 count={statusBreakdown.Paid.count}
                 amount={statusBreakdown.Paid.amount}
-                colorClasses="border-emerald-200 bg-emerald-50 text-emerald-800"
+                colorClasses="border-success/25 bg-success/10 text-success"
               />
 
               <StatusCard
                 title="Waived"
                 count={statusBreakdown.Waived.count}
                 amount={statusBreakdown.Waived.amount}
-                colorClasses="border-sky-200 bg-sky-50 text-sky-800"
+                colorClasses="border-ink/20 bg-mist text-ink-soft"
               />
             </div>
           </div>
 
-          <div className="mt-8 rounded-2xl border border-slate-100 bg-slate-50 p-6">
-            <h2 className="text-xl font-semibold text-slate-900">
+          <div className="mt-8 rounded-lg border border-ink/10 bg-mist/60 p-6">
+            <h2 className="text-xl font-semibold text-ink-deep">
               Search / Filter / Sort
             </h2>
 
             <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               <div>
-                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-700">
+                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-ink/70">
                   Start Date
                 </label>
                 <input
@@ -548,7 +546,7 @@ export default function FineSummaryReport() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-700">
+                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-ink/70">
                   End Date
                 </label>
                 <input
@@ -560,7 +558,7 @@ export default function FineSummaryReport() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-700">
+                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-ink/70">
                   Filter By Status
                 </label>
                 <select
@@ -578,7 +576,7 @@ export default function FineSummaryReport() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-700">
+                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-ink/70">
                   Min Days Overdue
                 </label>
                 <input
@@ -592,7 +590,7 @@ export default function FineSummaryReport() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-700">
+                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-ink/70">
                   Search By
                 </label>
                 <select
@@ -611,7 +609,7 @@ export default function FineSummaryReport() {
               </div>
 
               <div className="xl:col-span-2">
-                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-700">
+                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-ink/70">
                   Search Text
                 </label>
                 <input
@@ -624,7 +622,7 @@ export default function FineSummaryReport() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-700">
+                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-ink/70">
                   Sort By
                 </label>
                 <select
@@ -645,7 +643,7 @@ export default function FineSummaryReport() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-700">
+                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-ink/70">
                   Sort Direction
                 </label>
                 <select
@@ -664,15 +662,15 @@ export default function FineSummaryReport() {
             </div>
           </div>
 
-          <div className="mt-8 rounded-2xl border border-slate-100 bg-slate-50 p-6">
-            <h2 className="text-xl font-semibold text-slate-900">
+          <div className="mt-8 rounded-lg border border-ink/10 bg-mist/60 p-6">
+            <h2 className="text-xl font-semibold text-ink-deep">
               Fine Detail Table
             </h2>
 
             <div className="mt-4 overflow-x-auto">
               <table className="min-w-full text-left text-sm">
                 <thead>
-                  <tr className="border-b border-slate-200 text-slate-900">
+                  <tr className="border-b border-ink/10 text-ink-deep">
                     <th className="px-3 py-2">Fine ID</th>
                     <th className="px-3 py-2">Patron</th>
                     <th className="px-3 py-2">Book Name</th>
@@ -689,13 +687,13 @@ export default function FineSummaryReport() {
                 <tbody>
                   {filteredFines.length === 0 ? (
                     <tr>
-                      <td colSpan={10} className="px-3 py-5 text-slate-600">
+                      <td colSpan={10} className="px-3 py-5 text-ink/65">
                         No fine records match the current filters.
                       </td>
                     </tr>
                   ) : (
                     filteredFines.map((fine) => (
-                      <tr key={fine.fineId} className="border-b border-slate-100 text-slate-700">
+                      <tr key={fine.fineId} className="border-b border-ink/10 text-ink/70">
                         <td className="px-3 py-3">{fine.fineId}</td>
 
                         <td className="px-3 py-3">
@@ -714,7 +712,7 @@ export default function FineSummaryReport() {
 
                         <td className="px-3 py-3">{SafeNumber(fine.daysOverdue)}</td>
 
-                        <td className="px-3 py-3 text-rose-600">
+                        <td className="px-3 py-3 text-danger">
                           {FormatMoney(fine.fineAmount)}
                         </td>
 
@@ -722,19 +720,19 @@ export default function FineSummaryReport() {
                           {FormatMoney(fine.paidAmount)}
                         </td>
 
-                        <td className="px-3 py-3 font-semibold text-slate-900">
+                        <td className="px-3 py-3 font-semibold text-ink-deep">
                           {FormatMoney(fine.remainingAmount)}
                         </td>
 
                         <td
                           className={`px-3 py-3 font-semibold ${
                             NormalizeStatus(fine) === "Overdue"
-                              ? "text-rose-600"
+                              ? "text-danger"
                               : NormalizeStatus(fine) === "Returned but unpaid"
-                                ? "text-amber-600"
+                                ? "text-brass"
                                 : NormalizeStatus(fine) === "Paid"
-                                  ? "text-emerald-600"
-                                  : "text-sky-600"
+                                  ? "text-success"
+                                  : "text-ink-soft"
                           }`}
                         >
                           {NormalizeStatus(fine)}

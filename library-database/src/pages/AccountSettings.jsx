@@ -7,12 +7,8 @@ import {
   UpdateStoredUser,
 } from "../api";
 
-// Updated to match the high-visibility "Search Bar" style from your screenshots
-const inputClassName =
-  "mt-2 block w-full rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 shadow-sm outline-none focus:ring-2 focus:ring-sky-500 transition-all placeholder:text-slate-400";
-
-const labelClassName =
-  "block ml-2 text-sm font-bold text-slate-700 uppercase tracking-wide mt-4 mb-1";
+const inputClassName = "block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)] mt-2";
+const labelClassName = "mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70 mt-4";
 
 export default function AccountSettings() {
   const [email, setEmail] = useState("");
@@ -146,21 +142,20 @@ export default function AccountSettings() {
   }
 
   return (
-    <section className="space-y-4 pt-2 rounded-xl bg-slate-100/40  border border-gray-100 p-4 inset-shadow-sm ">
+    <section className="space-y-6">
       <div className="mb-4">
-        <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-          Settings
-        </h2>
-        <p className="text-slate-600">
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-brass-deep">Profile</p>
+        <h2 className="font-display text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-tight text-ink-deep mt-2 text-3xl">Settings</h2>
+        <p className="mt-2 text-sm leading-6 text-ink/65">
           Manage your profile and security preferences.
         </p>
       </div>
 
       {loading && (
-        <p className="text-slate-600 animate-pulse">Loading settings...</p>
+        <p className="text-ink/65 animate-pulse">Loading settings...</p>
       )}
       {!loading && error && (
-        <div className="rounded-xl bg-red-50 border border-red-200 p-4 text-red-700 text-sm font-medium">
+        <div className="rounded-xl bg-danger/10 border border-danger/25 p-4 text-danger text-sm font-medium">
           {error}
         </div>
       )}
@@ -170,12 +165,12 @@ export default function AccountSettings() {
           {/* Contact Info Form */}
           <form
             onSubmit={HandleContactSubmit}
-            className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm"
+            className="border border-ink/10 bg-paper/80 p-5"
           >
-            <h3 className="text-xl font-bold text-slate-900">
+            <h3 className="text-xl font-bold text-ink-deep">
               Contact Information
             </h3>
-            <p className="mt-1 text-sm text-slate-600 italic">
+            <p className="mt-1 text-sm text-ink/65 italic">
               Self-service profile management.
             </p>
 
@@ -248,7 +243,7 @@ export default function AccountSettings() {
             </div>
 
             {contactMessage && (
-              <p className="mt-4 text-sm font-medium text-emerald-600 bg-emerald-50 p-2 rounded-lg border border-emerald-100">
+              <p className="mt-4 text-sm font-medium text-success bg-success/10 p-2 rounded-lg border border-success/20">
                 {contactMessage}
               </p>
             )}
@@ -265,10 +260,10 @@ export default function AccountSettings() {
           {/* Password Form */}
           <form
             onSubmit={HandlePasswordSubmit}
-            className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm"
+            className="border border-ink/10 bg-paper/80 p-5"
           >
-            <h3 className="text-xl font-bold text-slate-900">Security</h3>
-            <p className="mt-1 text-sm text-slate-600 italic">
+            <h3 className="text-xl font-bold text-ink-deep">Security</h3>
+            <p className="mt-1 text-sm text-ink/65 italic">
               Update your account password.
             </p>
 
@@ -328,7 +323,7 @@ export default function AccountSettings() {
             </div>
 
             {passwordMessage && (
-              <p className="mt-4 text-sm font-medium text-emerald-600 bg-emerald-50 p-2 rounded-lg border border-emerald-100">
+              <p className="mt-4 text-sm font-medium text-success bg-success/10 p-2 rounded-lg border border-success/20">
                 {passwordMessage}
               </p>
             )}

@@ -17,13 +17,13 @@ function LoanHistoryCard({ itemData }) {
   const formattedLoanStart = FormatDate(new Date(itemData.loanStart), true);
   const formattedLoanEnd = FormatDate(new Date(itemData.loanEnd), true);
   return (
-    <div className="rounded-3xl bg-white px-3 py-1.5 outline-2 -outline-offset-1 outline-slate-200/60">
+    <div className="border border-ink/10 bg-paper/80 px-3 py-1.5">
       <div className="grid grid-cols-4">
         <div className="col-span-3 m-2 flex gap-4">
           <ItemImage itemData={itemData} />
           <ItemHolder data={itemData} />
         </div>
-        <div className="col-span-1 grid grid-rows-3 items-center text-center text-sm text-slate-600">
+        <div className="col-span-1 grid grid-rows-3 items-center text-center text-sm text-ink/65">
           <div>Borrowed: {formattedLoanStart}</div>
           <div>Due: {formattedLoanEnd}</div>
           <div>Status: {itemData.loanStatus ?? "Completed"}</div>
@@ -91,20 +91,21 @@ export default function Loans() {
   }
 
   return (
-    <section className="space-y-2 pt-2 rounded-xl bg-slate-100/40  border border-gray-100 p-4 inset-shadow-sm ">
-      <h2 className="text-3xl font-semibold tracking-tight text-slate-800">
-        Borrowing
-      </h2>
-      <h3 className="mt-2 text-lg font-semibold text-slate-900">Loans</h3>
-      {loading && <p className="mt-2 text-slate-600">Loading circulation...</p>}
-      {!loading && error && <p className="mt-2 text-rose-600">{error}</p>}
+    <section className="space-y-6">
+      <div>
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-brass-deep">Circulation</p>
+        <h2 className="font-display text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-tight text-ink-deep mt-2 text-3xl">Borrowing</h2>
+      </div>
+      <h3 className="text-lg font-semibold text-ink-deep">Loans</h3>
+      {loading && <p className="mt-2 text-ink/65">Loading circulation...</p>}
+      {!loading && error && <p className="mt-2 text-danger">{error}</p>}
 
       {!loading && !error && (
         <div className="mt-2 space-y-8">
           <div>
             <div className="mt-2 flex flex-wrap justify-evenly gap-4">
               {data.loans.length === 0 ? (
-                <p className="text-slate-300">No current loans.</p>
+                <p className="text-ink/35">No current loans.</p>
               ) : (
                 data.loans.map((item) => (
                   <ItemLoan key={item.loanId} itemData={item} />
@@ -114,10 +115,10 @@ export default function Loans() {
           </div>
 
           <div>
-            <h3 className="mt-2 text-lg font-semibold text-slate-900">Holds</h3>
+            <h3 className="mt-2 text-lg font-semibold text-ink-deep">Holds</h3>
             <div className="mt-2 flex flex-wrap justify-evenly gap-4">
               {data.holds.length === 0 ? (
-                <p className="text-slate-300">No active holds.</p>
+                <p className="text-ink/35">No active holds.</p>
               ) : (
                 data.holds.map((item) => (
                   <ItemHold
@@ -131,12 +132,12 @@ export default function Loans() {
           </div>
 
           <div>
-            <h3 className="mt-2 text-lg font-semibold text-slate-900">
+            <h3 className="mt-2 text-lg font-semibold text-ink-deep">
               History
             </h3>
             <div className="mt-2 space-y-4">
               {data.history.length === 0 ? (
-                <p className="text-slate-300">No completed loans found.</p>
+                <p className="text-ink/35">No completed loans found.</p>
               ) : (
                 data.history.map((item) => (
                   <LoanHistoryCard key={item.loanId} itemData={item} />

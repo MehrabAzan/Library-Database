@@ -20,15 +20,15 @@ function FormatActivityDate(value) {
 // Updated to use light-theme badge colors!
 function GetStatusClass(status) {
   if (status === "Paid") {
-    return "bg-emerald-100 text-emerald-800 border-emerald-200";
+    return "bg-success/15 text-success border-success/25";
   }
 
   if (status === "Waived") {
-    return "bg-slate-100 text-slate-800 border-slate-200";
+    return "bg-mist text-ink-deep border-ink/10";
   }
 
   if (status === "Overdue" || status === "Fine") {
-    return "bg-rose-100 text-rose-800 border-rose-200";
+    return "bg-danger/15 text-danger border-danger/25";
   }
 
   if (
@@ -36,14 +36,14 @@ function GetStatusClass(status) {
     status === "Hold" ||
     status === "Ready"
   ) {
-    return "bg-amber-100 text-amber-800 border-amber-200";
+    return "bg-brass/15 text-brass-deep border-brass/25";
   }
 
   if (status === "New") {
-    return "bg-blue-100 text-blue-800 border-blue-200";
+    return "bg-ink/10 text-ink-soft border-ink/20";
   }
 
-  return "bg-slate-100 text-slate-600 border-slate-200";
+  return "bg-mist text-ink/65 border-ink/10";
 }
 
 export default function AccountActivity() {
@@ -91,55 +91,54 @@ export default function AccountActivity() {
   }, [userKey]);
 
   return (
-    <section className="space-y-2 pt-2 rounded-xl bg-slate-100/40  border border-gray-100 p-4 inset-shadow-sm ">
-      <h2 className="text-3xl font-semibold tracking-tight text-slate-800">
-        Account Activity
-      </h2>
+    <section className="space-y-6">
+      <div>
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-brass-deep">History</p>
+        <h2 className="font-display text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-tight text-ink-deep mt-2 text-3xl">Account Activity</h2>
+      </div>
 
       {loading ? (
-        <p className="text-slate-500 font-medium">Loading activity...</p>
+        <p className="text-ink/50 font-medium">Loading activity...</p>
       ) : null}
       {!loading && error ? (
-        <p className="text-rose-600 font-medium">{error}</p>
+        <p className="text-danger font-medium">{error}</p>
       ) : null}
 
       {!loading && !error ? (
         <div className="space-y-4">
           {activities.length === 0 ? (
-            <p className="text-slate-500">No account activity found.</p>
+            <p className="text-ink/50">No account activity found.</p>
           ) : (
             activities.map((activity) => (
               <article
                 key={activity.activityId}
-                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md"
+                className="border-y border-ink/10 bg-paper/80 px-4 py-5"
               >
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#244c5a]">
-                      {activity.activityType}
-                    </p>
-                    <h3 className="mt-1 text-xl font-bold text-slate-900">
+                    <p className="text-xs font-bold uppercase tracking-[0.16em] text-brass-deep">{activity.activityType}</p>
+                    <h3 className="mt-1 text-xl font-bold text-ink-deep">
                       {activity.headline}
                     </h3>
                     {activity.title ? (
-                      <p className="mt-2 text-base font-medium text-slate-800">
+                      <p className="mt-2 text-base font-medium text-ink-deep">
                         {activity.title}
                       </p>
                     ) : null}
                     {activity.creator ? (
-                      <p className="mt-1 text-sm font-medium text-[#244c5a]">
+                      <p className="mt-1 text-sm font-medium text-ink-soft">
                         {activity.creator}
                       </p>
                     ) : null}
                     {activity.detail ? (
-                      <p className="mt-2 text-sm text-slate-600">
+                      <p className="mt-2 text-sm text-ink/65">
                         {activity.detail}
                       </p>
                     ) : null}
                   </div>
 
                   <div className="flex flex-col items-start gap-2 sm:items-end">
-                    <p className="text-sm font-medium text-slate-500">
+                    <p className="text-sm font-medium text-ink/50">
                       {FormatActivityDate(activity.activityDate)}
                     </p>
                     {activity.status ? (

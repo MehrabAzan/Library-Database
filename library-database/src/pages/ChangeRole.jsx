@@ -9,8 +9,7 @@ import {
 } from "../api";
 import { useMessage } from "../hooks/useMessage";
 
-const inputClassName =
-  "mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all";
+const inputClassName = "block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)] mt-2";
 
 const emptyFormState = {
   firstName: "",
@@ -259,15 +258,11 @@ export default function ChangeRole() {
   }
 
   return (
-    <section className="space-y-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+    <section className="space-y-6 border-y border-ink/10 bg-paper/80 py-8">
       <div>
-        <p className="text-xs font-bold uppercase tracking-[0.3em] text-sky-700">
-          Admin
-        </p>
-        <h1 className="mt-3 text-4xl font-bold tracking-tight text-slate-900">
-          User Management
-        </h1>
-        <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600">
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-brass-deep">Admin</p>
+        <h1 className="font-display text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-tight text-ink-deep mt-2 text-4xl">User Management</h1>
+        <p className="mt-4 max-w-3xl text-base leading-7 text-ink/65">
           Search, update, and delete patron or staff accounts. Use the search to
           find users by any field.
         </p>
@@ -275,12 +270,12 @@ export default function ChangeRole() {
 
       <form
         onSubmit={HandleSearchSubmit}
-        className="grid gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-6 lg:grid-cols-[1.2fr_220px_auto_auto]"
+        className="grid gap-4 rounded-lg border border-ink/10 bg-mist/60 p-6 lg:grid-cols-[1.2fr_220px_auto_auto]"
       >
         <div>
           <label
             htmlFor="user-search"
-            className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-700"
+            className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70"
           >
             Search Detail
           </label>
@@ -295,7 +290,7 @@ export default function ChangeRole() {
         <div>
           <label
             htmlFor="user-type-filter"
-            className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-700"
+            className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70"
           >
             Account Type
           </label>
@@ -318,19 +313,19 @@ export default function ChangeRole() {
         </div>
       </form>
 
-      <div className="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)]  ">
-        <aside className="rounded-2xl border border-slate-200 p-6 bg-white h-screen overflow-auto">
+      <div className="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)] ">
+        <aside className="rounded-lg border border-ink/10 p-6 bg-white h-screen overflow-auto">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-slate-900">Accounts</h2>
-            <span className="text-sm font-semibold text-slate-600">
+            <h2 className="text-xl font-bold text-ink-deep">Accounts</h2>
+            <span className="text-sm font-semibold text-ink/65">
               {users.length} Found
             </span>
           </div>
 
           <div className="mt-6 space-y-3 ">
-            {listLoading && <p className="text-slate-600">Loading users...</p>}
+            {listLoading && <p className="text-ink/65">Loading users...</p>}
             {!listLoading && users.length === 0 && (
-              <p className="text-slate-600">No matches found.</p>
+              <p className="text-ink/65">No matches found.</p>
             )}
             {users.map((user) => {
               const isSelected = BuildUserRecordKey(user) === selectedUserKey;
@@ -339,22 +334,22 @@ export default function ChangeRole() {
                   key={BuildUserRecordKey(user)}
                   type="button"
                   onClick={() => HandleSelectUser(user)}
-                  className={`w-full rounded-2xl border px-4 py-4 text-left transition-all ${isSelected ? "border-sky-200 bg-sky-50 shadow-sm" : "border-slate-200 shadow bg-white hover:border-slate-300 hover:bg-slate-50"}`}
+                  className={`w-full rounded-lg border px-4 py-4 text-left transition-all ${isSelected ? "border-ink/20 bg-mist" : "border-ink/10 shadow bg-white hover:border-ink/20 hover:bg-mist/80"}`}
                 >
                   <div className="flex items-center justify-between gap-4">
                     <div>
-                      <p className="font-bold text-slate-900">
+                      <p className="font-bold text-ink-deep">
                         {user.firstName} {user.lastName}
                       </p>
-                      <p className="text-xs font-medium text-slate-600">
+                      <p className="text-xs font-medium text-ink/65">
                         {BuildUserTitle(user)}
                       </p>
                     </div>
-                    <span className="rounded-full bg-slate-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-600">
+                    <span className="rounded-full bg-mist px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-ink/65">
                       {user.userType}
                     </span>
                   </div>
-                  <p className="mt-3 text-sm text-slate-600 truncate">
+                  <p className="mt-3 text-sm text-ink/65 truncate">
                     {user.email}
                   </p>
                 </button>
@@ -363,22 +358,22 @@ export default function ChangeRole() {
           </div>
         </aside>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-8">
+        <div className="border-y border-ink/10 bg-paper/80 py-8">
           {!selectedUser ? (
-            <div className="flex min-h-[20rem] items-center justify-center text-slate-600 font-medium">
+            <div className="flex min-h-[20rem] items-center justify-center text-ink/65 font-medium">
               Select a user to manage their account.
             </div>
           ) : (
             <form onSubmit={HandleSave} className="space-y-8">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.3em] text-sky-700">
+                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-brass-deep">
                     {selectedUser.userType} Account
                   </p>
-                  <h2 className="mt-2 text-3xl font-bold text-slate-900">
+                  <h2 className="mt-2 text-3xl font-bold text-ink-deep">
                     {selectedUser.firstName} {selectedUser.lastName}
                   </h2>
-                  <p className="mt-1 text-sm font-medium text-slate-600">
+                  <p className="mt-1 text-sm font-medium text-ink/65">
                     {BuildUserTitle(selectedUser)}
                   </p>
                 </div>
@@ -400,7 +395,7 @@ export default function ChangeRole() {
                 <div>
                   <label
                     htmlFor="firstName"
-                    className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-700"
+                    className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70"
                   >
                     First Name
                   </label>
@@ -417,7 +412,7 @@ export default function ChangeRole() {
                 <div>
                   <label
                     htmlFor="lastName"
-                    className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-700"
+                    className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70"
                   >
                     Last Name
                   </label>
@@ -434,7 +429,7 @@ export default function ChangeRole() {
                 <div>
                   <label
                     htmlFor="email"
-                    className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-700"
+                    className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70"
                   >
                     Email Address
                   </label>
@@ -452,7 +447,7 @@ export default function ChangeRole() {
                 <div>
                   <label
                     htmlFor="dateOfBirth"
-                    className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-700"
+                    className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70"
                   >
                     Date of Birth
                   </label>
@@ -473,7 +468,7 @@ export default function ChangeRole() {
                 <div>
                   <label
                     htmlFor="roleCode"
-                    className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-700"
+                    className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70"
                   >
                     System Role
                   </label>
@@ -500,7 +495,7 @@ export default function ChangeRole() {
                 <div>
                   <label
                     htmlFor="isActive"
-                    className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-700"
+                    className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70"
                   >
                     Account Status
                   </label>
@@ -522,7 +517,7 @@ export default function ChangeRole() {
                     <div>
                       <label
                         htmlFor="phoneNumber"
-                        className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-700"
+                        className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70"
                       >
                         Phone Number
                       </label>
@@ -541,7 +536,7 @@ export default function ChangeRole() {
                     <div>
                       <label
                         htmlFor="address"
-                        className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-700"
+                        className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70"
                       >
                         Home Address
                       </label>

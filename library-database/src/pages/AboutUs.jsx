@@ -2,8 +2,8 @@ export default function AboutUs() {
   return (
     <section className="space-y-12">
       <div className="max-w-3xl">
-        <p className="dh-kicker">About the Library</p>
-        <h1 className="dh-section-title mt-2 text-4xl sm:text-5xl">
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-brass-deep">About the Library</p>
+        <h1 className="font-display text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-tight text-ink-deep mt-2 text-4xl sm:text-5xl">
           About Datahaven
         </h1>
         <p className="mt-4 text-base leading-7 text-ink/70">

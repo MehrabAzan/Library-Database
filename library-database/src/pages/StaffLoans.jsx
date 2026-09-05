@@ -145,25 +145,24 @@ export default function StaffLoans() {
   }, [loans, searchBy, searchText]);
 
   return (
-    <section className="mx-auto flex w-full max-w-6xl flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/50">
-      <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-900">
-        Current Loans
-      </h1>
+    <section className="mx-auto flex w-full max-w-6xl flex-col border-y border-ink/10 bg-paper/80 py-6">
+      <p className="text-xs font-bold uppercase tracking-[0.16em] text-brass-deep">Circulation</p>
+      <h1 className="font-display text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-tight text-ink-deep mt-2 text-4xl">Current Loans</h1>
 
-      <p className="mt-4 text-base leading-7 text-slate-600">
+      <p className="mt-4 text-base leading-7 text-ink/65">
         View all active loans, search by selected fields, and manage returns or
         lost items.
       </p>
 
       <div className=" grid w-full gap-4 grid-cols-4">
         <div>
-          <label className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-700">
+          <label className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">
             Search By
           </label>
           <select
             value={searchBy}
             onChange={(event) => setSearchBy(event.target.value)}
-            className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
+            className="block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)] mt-2"
           >
             <option value="all">All</option>
             <option value="loanId">Loan ID</option>
@@ -176,7 +175,7 @@ export default function StaffLoans() {
         </div>
 
         <div className="col-span-3">
-          <label className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-700">
+          <label className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">
             Search Text
           </label>
           <input
@@ -184,16 +183,16 @@ export default function StaffLoans() {
             value={searchText}
             onChange={(event) => setSearchText(event.target.value)}
             placeholder="Enter search text..."
-            className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
+            className="block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)] mt-2"
           />
         </div>
       </div>
 
-      <div className="mt-6 space-y-4  max-h-screen overflow-auto pr-3">
+      <div className="mt-6 space-y-4 max-h-screen overflow-auto pr-3">
         {isLoading ? (
-          <div className="text-slate-600 font-medium">Loading loans...</div>
+          <div className="text-ink/65 font-medium">Loading loans...</div>
         ) : filteredLoans.length === 0 ? (
-          <div className="text-slate-600 font-medium">
+          <div className="text-ink/65 font-medium">
             No matching current loans found.
           </div>
         ) : (
@@ -205,39 +204,39 @@ export default function StaffLoans() {
             return (
               <div
                 key={loan.loanId}
-                className="grid grid-cols-1 gap-4 rounded-xl bg-slate-50 p-4 border border-slate-200 hover:border-sky-200 transition-colors lg:grid-cols-4"
+                className="grid grid-cols-1 gap-4 rounded-xl bg-mist/60 p-4 border border-ink/10 hover:border-ink/25 transition-colors lg:grid-cols-4"
               >
                 <div className="lg:col-span-3">
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                    <div className="text-xl font-bold text-slate-900">
+                    <div className="text-xl font-bold text-ink-deep">
                       {loan.title}
                     </div>
-                    <div className="text-sm text-slate-500">
+                    <div className="text-sm text-ink/50">
                       Loan ID: {loan.loanId}
                     </div>
-                    <div className="text-sm text-slate-500">
+                    <div className="text-sm text-ink/50">
                       Item ID: {loan.itemId}
                     </div>
                   </div>
 
                   {loan.creator ? (
-                    <div className="mt-1 font-medium text-sky-700">
+                    <div className="mt-1 font-medium text-ink-soft">
                       {loan.creator}
                     </div>
                   ) : null}
 
-                  <div className="mt-3 font-medium text-slate-700">
+                  <div className="mt-3 font-medium text-ink/70">
                     Borrowed by: {loan.patronName} (Patron ID: {loan.patronId})
                   </div>
 
-                  <div className="mt-1 text-sm text-slate-600">
+                  <div className="mt-1 text-sm text-ink/65">
                     Loan date:{" "}
                     {loan.loanStart
                       ? FormatDate(new Date(loan.loanStart), true)
                       : "-"}
                   </div>
 
-                  <div className="text-sm text-slate-600">
+                  <div className="text-sm text-ink/65">
                     Due date:{" "}
                     {loan.loanEnd
                       ? FormatDate(new Date(loan.loanEnd), true)

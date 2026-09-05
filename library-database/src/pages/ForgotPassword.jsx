@@ -80,8 +80,8 @@ export default function ForgotPassword() {
   }
 
   return (
-    <section className="dh-auth-panel">
-      <p className="dh-kicker text-center">Account recovery</p>
+    <section className="mx-auto w-full max-w-md border-t-[3px] border-brass bg-white/80 px-6 py-8 shadow-soft sm:px-9 sm:py-10 sm:pb-12">
+      <p className="text-xs font-bold uppercase tracking-[0.16em] text-brass-deep text-center">Account recovery</p>
       <h1 className="mt-2 text-center font-display text-3xl font-semibold tracking-tight text-ink-deep sm:text-4xl">
         {token ? "Reset password" : "Forgot password"}
       </h1>
@@ -105,7 +105,7 @@ export default function ForgotPassword() {
 
       {token ? (
         <form className="mt-6 w-full" onSubmit={HandleResetPassword}>
-          <label htmlFor="new-password" className="dh-label">
+          <label htmlFor="new-password" className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">
             New password
           </label>
           <input
@@ -115,11 +115,11 @@ export default function ForgotPassword() {
             name="newPassword"
             type="password"
             placeholder="Min. 8 characters"
-            className="dh-input"
+            className="block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)]"
             autoComplete="new-password"
           />
 
-          <label htmlFor="confirm-password" className="dh-label mt-5">
+          <label htmlFor="confirm-password" className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70 mt-5">
             Confirm password
           </label>
           <input
@@ -129,7 +129,7 @@ export default function ForgotPassword() {
             name="confirmPassword"
             type="password"
             placeholder="Repeat your password"
-            className="dh-input"
+            className="block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)]"
             autoComplete="new-password"
           />
 
@@ -143,7 +143,7 @@ export default function ForgotPassword() {
         </form>
       ) : (
         <form className="mt-6 w-full" onSubmit={HandleRequestReset}>
-          <label htmlFor="recovery-email" className="dh-label">
+          <label htmlFor="recovery-email" className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">
             Email address
           </label>
           <input
@@ -152,7 +152,7 @@ export default function ForgotPassword() {
             name="email"
             type="email"
             placeholder="name@example.com"
-            className="dh-input"
+            className="block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)]"
             autoComplete="email"
           />
           <div className="mt-8">
@@ -167,8 +167,8 @@ export default function ForgotPassword() {
 
       {!token && previewLink && (
         <div className="mt-8 w-full border border-ink/10 bg-mist/80 p-5 text-left">
-          <p className="dh-kicker">Development preview</p>
-          <a href={previewLink} className="dh-link mt-2 block break-all text-sm">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-brass-deep">Development preview</p>
+          <a href={previewLink} className="font-semibold text-ink-soft underline decoration-ink-soft/35 underline-offset-[0.18em] transition-[color,text-decoration-color] duration-150 hover:text-ink hover:decoration-brass mt-2 block break-all text-sm">
             {previewLink}
           </a>
           {previewExpiresAt && (
@@ -180,7 +180,7 @@ export default function ForgotPassword() {
       )}
 
       <div className="mt-10 text-center">
-        <Link to="/login" className="dh-link text-sm">
+        <Link to="/login" className="font-semibold text-ink-soft underline decoration-ink-soft/35 underline-offset-[0.18em] transition-[color,text-decoration-color] duration-150 hover:text-ink hover:decoration-brass text-sm">
           Return to login
         </Link>
       </div>

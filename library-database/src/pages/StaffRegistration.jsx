@@ -6,15 +6,13 @@ export default function StaffRegistration() {
   const { showSuccess, showError } = useMessage();
 
   // Standardized classes for light-mode visibility
-  const inputClasses =
-    "block w-full rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 shadow-sm outline-none focus:ring-2 focus:ring-sky-500 transition-all placeholder:text-slate-400";
+  const inputClasses = "block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)]";
 
-  const labelClasses =
-    "block text-sm font-bold text-slate-700 uppercase tracking-wide mb-2 text-left";
+  const labelClasses = "mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70 text-left";
 
   return (
-    <section className="mx-auto flex w-full max-w-4xl flex-col items-center rounded-3xl border border-slate-200 bg-white p-8 shadow-sm sm:p-12">
-      <h1 className="mt-2 text-4xl font-bold tracking-tight text-slate-900">
+    <section className="mx-auto flex w-full max-w-4xl flex-col items-center border border-ink/10 bg-paper/80 p-8 sm:p-12">
+      <h1 className="mt-2 text-4xl font-bold tracking-tight text-ink-deep">
         Staff Registration
       </h1>
 

@@ -112,19 +112,20 @@ export default function Lost() {
   }, [lostLoans, searchText, searchBy]);
 
   return (
-    <section className="mx-auto flex w-full max-w-6xl flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/50">
-      <h1 className="mt-3 text-4xl font-semibold text-slate-900">Lost Items</h1>
+    <section className="mx-auto flex w-full max-w-6xl flex-col border-y border-ink/10 bg-paper/80 py-6">
+      <p className="text-xs font-bold uppercase tracking-[0.16em] text-brass-deep">Circulation</p>
+      <h1 className="font-display text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-tight text-ink-deep mt-2 text-4xl">Lost Items</h1>
 
       <div className="mt-6 grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className="text-xs font-semibold text-sky-700 uppercase">
+          <label className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">
             Search By
           </label>
 
           <select
             value={searchBy}
             onChange={(e) => setSearchBy(e.target.value)}
-            className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 focus:border-sky-500 focus:ring-1 focus:ring-sky-500 outline-none transition-all"
+            className="block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)] mt-2"
           >
             <option value="all">All</option>
             <option value="loanId">Loan ID</option>
@@ -137,7 +138,7 @@ export default function Lost() {
         </div>
 
         <div>
-          <label className="text-xs font-semibold text-sky-700 uppercase">
+          <label className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">
             Search Text
           </label>
 
@@ -145,42 +146,42 @@ export default function Lost() {
             type="text"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 focus:border-sky-500 focus:ring-1 focus:ring-sky-500 outline-none transition-all"
+            className="block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)] mt-2"
           />
         </div>
       </div>
 
-      <div className="mt-6 space-y-4 max-h-screen overflow-auto  pr-3">
+      <div className="mt-6 space-y-4 max-h-screen overflow-auto pr-3">
         {isLoading ? (
-          <div className="text-slate-600 font-medium">
+          <div className="text-ink/65 font-medium">
             Loading lost items...
           </div>
         ) : filteredLost.length === 0 ? (
-          <div className="text-slate-600 font-medium">No lost items.</div>
+          <div className="text-ink/65 font-medium">No lost items.</div>
         ) : (
           filteredLost.map((loan) => (
             <div
               key={loan.loanId}
-              className="grid grid-cols-1 gap-4 rounded-xl bg-slate-50 p-4 border border-slate-200 hover:border-sky-200 transition-colors lg:grid-cols-4"
+              className="grid grid-cols-1 gap-4 rounded-xl bg-mist/60 p-4 border border-ink/10 hover:border-ink/25 transition-colors lg:grid-cols-4"
             >
               <div className="lg:col-span-3">
-                <div className="text-xl font-bold text-slate-900">
+                <div className="text-xl font-bold text-ink-deep">
                   {loan.title}
                 </div>
 
-                <div className="text-slate-500 text-sm mt-1">
+                <div className="text-ink/50 text-sm mt-1">
                   Loan ID: {loan.loanId}
                 </div>
 
-                <div className="text-slate-500 text-sm">
+                <div className="text-ink/50 text-sm">
                   Item ID: {loan.itemId}
                 </div>
 
-                <div className="text-slate-700 mt-3 font-medium">
+                <div className="text-ink/70 mt-3 font-medium">
                   Patron: {loan.patronName} ({loan.patronId})
                 </div>
 
-                <div className="text-slate-600 text-sm mt-1">
+                <div className="text-ink/65 text-sm mt-1">
                   Lost Date:{" "}
                   {loan.LostDate
                     ? FormatDate(new Date(loan.LostDate), true)

@@ -6,22 +6,22 @@ import { useMessage } from "../hooks/useMessage";
 
 function GetStatusColorClass(fineStatus) {
   if (fineStatus === "Overdue") {
-    return "text-rose-600 font-bold";
+    return "text-danger font-bold";
   }
 
   if (fineStatus === "Returned but unpaid") {
-    return "text-amber-700 font-bold";
+    return "text-brass-deep font-bold";
   }
 
   if (fineStatus === "Paid") {
-    return "text-emerald-700 font-bold";
+    return "text-success font-bold";
   }
 
   if (fineStatus === "Waived") {
-    return "text-slate-500 font-bold";
+    return "text-ink/50 font-bold";
   }
 
-  return "text-slate-700 font-bold";
+  return "text-ink/70 font-bold";
 }
 
 function FormatMoney(value) {
@@ -196,25 +196,24 @@ export default function StaffFines() {
   }, [fines, searchBy, searchText]);
 
   return (
-    <section className="mx-auto flex w-full max-w-7xl flex-col rounded-3xl border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/50">
-      <h1 className="text-4xl font-semibold tracking-tight text-slate-900">
-        Fines
-      </h1>
+    <section className="mx-auto flex w-full max-w-7xl flex-col border-y border-ink/10 bg-paper/80 py-8">
+      <p className="text-xs font-bold uppercase tracking-[0.16em] text-brass-deep">Circulation</p>
+      <h1 className="font-display text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-tight text-ink-deep mt-2 text-4xl">Fines</h1>
 
-      <p className="mt-2 text-base leading-7 text-slate-600">
+      <p className="mt-2 text-base leading-7 text-ink/65">
         View all fines, search by selected fields, and manage overdue, unpaid,
         paid, and waived balances.
       </p>
 
       <div className="mt-2 w-full grid gap-4 grid-cols-4">
         <div>
-          <label className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-700">
+          <label className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">
             Search By
           </label>
           <select
             value={searchBy}
             onChange={(event) => setSearchBy(event.target.value)}
-            className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
+            className="block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)] mt-2"
           >
             <option value="all">All</option>
             <option value="fineId">Fine ID</option>
@@ -228,7 +227,7 @@ export default function StaffFines() {
         </div>
 
         <div className="col-span-3">
-          <label className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-700">
+          <label className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">
             Search Text
           </label>
           <input
@@ -236,23 +235,23 @@ export default function StaffFines() {
             value={searchText}
             onChange={(event) => setSearchText(event.target.value)}
             placeholder="Enter search text..."
-            className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
+            className="block w-full rounded-lg border border-ink/20 bg-white px-[0.9rem] py-[0.65rem] text-[0.9375rem] text-ink shadow-soft outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink/40 focus:border-ink-soft focus:shadow-[0_0_0_3px_rgb(20_85_95_/_0.18)] mt-2"
           />
         </div>
       </div>
 
       <div className="mt-2">
         {isLoading ? (
-          <div className="text-slate-600 font-medium">Loading fines...</div>
+          <div className="text-ink/65 font-medium">Loading fines...</div>
         ) : filteredFines.length === 0 ? (
-          <div className="text-slate-600 font-medium">
+          <div className="text-ink/65 font-medium">
             No matching fines found.
           </div>
         ) : (
-          <div className="mt-2 w-full overflow-x-auto rounded-xl border border-slate-200 shadow-sm max-h-screen overflow-auto">
+          <div className="mt-2 w-full overflow-x-auto rounded-xl border border-ink/10 max-h-screen overflow-auto">
             <table className="w-full table-auto text-left text-sm">
               <thead>
-                <tr className="bg-slate-100 text-left text-sm text-slate-700 border-b border-slate-200">
+                <tr className="bg-mist text-left text-sm text-ink/70 border-b border-ink/10">
                   <th className="px-4 py-3 font-semibold">Fine ID</th>
                   <th className="px-4 py-3 font-semibold">Title</th>
                   <th className="px-4 py-3 font-semibold">Patron</th>
@@ -278,18 +277,18 @@ export default function StaffFines() {
                   return (
                     <React.Fragment key={fine.fineId}>
                       <tr
-                        className={`border-b border-slate-100 bg-white text-slate-600 hover:bg-slate-50 transition-colors ${isExpanded ? "bg-slate-50" : ""}`}
+                        className={`border-b border-ink/10 bg-white text-ink/65 hover:bg-mist/80 transition-colors ${isExpanded ? "bg-mist/60" : ""}`}
                       >
-                        <td className="px-4 py-3 font-medium text-slate-900">
+                        <td className="px-4 py-3 font-medium text-ink-deep">
                           {fine.fineId}
                         </td>
 
                         <td className="px-4 py-3">
-                          <div className="font-semibold text-slate-900">
+                          <div className="font-semibold text-ink-deep">
                             {fine.title}
                           </div>
                           {fine.creator ? (
-                            <div className="text-sm font-medium text-sky-700">
+                            <div className="text-sm font-medium text-ink-soft">
                               {fine.creator}
                             </div>
                           ) : null}
@@ -297,7 +296,7 @@ export default function StaffFines() {
 
                         <td className="px-4 py-3">
                           {fine.patronName}{" "}
-                          <span className="text-slate-700">
+                          <span className="text-ink/70">
                             ({fine.patronId})
                           </span>
                         </td>
@@ -314,7 +313,7 @@ export default function StaffFines() {
                           {FormatMoney(fine.dailyFine)}
                         </td>
 
-                        <td className="px-4 py-3 font-medium text-rose-600">
+                        <td className="px-4 py-3 font-medium text-danger">
                           {FormatMoney(fine.fineAmount)}
                         </td>
 
@@ -322,7 +321,7 @@ export default function StaffFines() {
                           {FormatMoney(fine.paidAmount)}
                         </td>
 
-                        <td className="px-4 py-3 font-bold text-slate-900">
+                        <td className="px-4 py-3 font-bold text-ink-deep">
                           {FormatMoney(fine.remainingAmount)}
                         </td>
 
@@ -354,12 +353,12 @@ export default function StaffFines() {
                       </tr>
 
                       {isExpanded ? (
-                        <tr className="border-b border-slate-200 bg-slate-50">
+                        <tr className="border-b border-ink/10 bg-mist/60">
                           <td colSpan={11} className="px-4 py-4">
-                            <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                              <div className="text-sm font-medium text-slate-600">
+                            <div className="flex flex-col gap-3 border border-ink/10 bg-paper/80 p-5">
+                              <div className="text-sm font-medium text-ink/65">
                                 Enter payment amount up to{" "}
-                                <span className="font-bold text-slate-900">
+                                <span className="font-bold text-ink-deep">
                                   {FormatMoney(fine.remainingAmount)}
                                 </span>
                                 .
@@ -375,7 +374,7 @@ export default function StaffFines() {
                                     setPaymentAmount(event.target.value)
                                   }
                                   placeholder="Payment amount"
-                                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-slate-900 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all sm:max-w-xs"
+                                  className="w-full rounded-xl border border-ink/10 bg-mist/60 px-4 py-2 text-ink-deep outline-none focus:border-ink-soft focus:ring-1 focus:ring-ink-soft transition-all sm:max-w-xs"
                                 />
 
                                 <div className="flex gap-2">

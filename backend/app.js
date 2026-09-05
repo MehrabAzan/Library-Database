@@ -47,6 +47,7 @@ function CreateExpressApp() {
 }
 
 const app = CreateExpressApp();
+app.disable("x-powered-by");
 app.set("trust proxy", Number(process.env.TRUST_PROXY_HOPS) || 1);
 
 const port = Number(process.env.PORT) || 3000;
@@ -58,10 +59,17 @@ const passwordResetMaxAgeSeconds = Math.max(
   Number(process.env.PASSWORD_RESET_MAX_AGE_SECONDS) || 60 * 30,
   60 * 5
 );
+// 7mb leaves headroom for 5 MB image uploads sent as base64 data URLs (~33% overhead).
+const jsonBodyLimit = process.env.JSON_BODY_LIMIT?.trim() || "7mb";
+const dbSslRejectUnauthorized =
+  String(process.env.DB_SSL_REJECT_UNAUTHORIZED ?? "false").toLowerCase() ===
+  "true";
+const dbPort = Number(process.env.DB_PORT) || 3306;
 
 const weakSessionSecrets = new Set([
   "team8",
   "library-dev-session-secret-change-me",
+  "replace-with-a-long-random-secret",
 ]);
 
 const sessionSecret =
@@ -72,16 +80,27 @@ const sessionSecret =
 
 if (
   process.env.NODE_ENV === "production" &&
-  (!sessionSecret || weakSessionSecrets.has(sessionSecret))
+  (!sessionSecret ||
+    weakSessionSecrets.has(sessionSecret) ||
+    sessionSecret.length < 32)
 ) {
   console.error(
-    "Set SESSION_SECRET to a strong random value in production before starting the server."
+    "Set SESSION_SECRET to a strong random value (at least 32 characters) in production before starting the server."
   );
   process.exit(1);
 }
 
 const passwordResetSecret =
   process.env.PASSWORD_RESET_SECRET?.trim() || sessionSecret;
+
+if (
+  process.env.NODE_ENV === "production" &&
+  passwordResetSecret === sessionSecret
+) {
+  console.warn(
+    "PASSWORD_RESET_SECRET is not set; falling back to SESSION_SECRET. Set a separate value in production."
+  );
+}
 
 function ParseAllowedOrigins() {
   const configuredOrigins = [
@@ -112,6 +131,12 @@ const defaultAppOrigin =
   process.env.FRONTEND_ORIGIN?.trim() ||
   "http://localhost:5173";
 
+if (process.env.NODE_ENV === "production" && allowedOrigins.length === 0) {
+  console.warn(
+    "No APP_ORIGIN / FRONTEND_ORIGIN / CORS_ALLOWED_ORIGINS configured. Browser clients will be blocked by CORS."
+  );
+}
+
 const rateLimitBuckets = new Map();
 
 function IsAllowedOrigin(origin) {
@@ -128,9 +153,14 @@ function ApplySecurityHeaders(req, res) {
   res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
   res.setHeader(
     "Permissions-Policy",
-    "camera=(), microphone=(), geolocation=()"
+    "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
   );
   res.setHeader("Cross-Origin-Resource-Policy", "same-site");
+  res.setHeader("X-DNS-Prefetch-Control", "off");
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'none'; frame-ancestors 'none'; base-uri 'none'"
+  );
 
   const isSecureRequest =
     req.secure ||
@@ -140,7 +170,7 @@ function ApplySecurityHeaders(req, res) {
   if (isSecureRequest) {
     res.setHeader(
       "Strict-Transport-Security",
-      "max-age=31536000; includeSubDomains"
+      "max-age=31536000; includeSubDomains; preload"
     );
   }
 }
@@ -158,6 +188,14 @@ function ConsumeRateLimit(
 
   bucket.count += 1;
   rateLimitBuckets.set(key, bucket);
+
+  if (rateLimitBuckets.size > 5000) {
+    for (const [bucketKey, entry] of rateLimitBuckets) {
+      if (now >= entry.resetAt) {
+        rateLimitBuckets.delete(bucketKey);
+      }
+    }
+  }
 
   return bucket.count <= maxAttempts;
 }
@@ -181,23 +219,25 @@ app.use((req, res, next) => {
 
   const origin = String(req.get("origin") ?? "").trim();
   const hasOrigin = origin !== "";
+  const originAllowed = hasOrigin && IsAllowedOrigin(origin);
   const requestedHeaders = String(
     req.headers["access-control-request-headers"] ?? ""
   ).trim();
 
-  if (hasOrigin && IsAllowedOrigin(origin)) {
+  if (originAllowed) {
     res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      requestedHeaders || "Content-Type, Authorization"
+    );
+    res.setHeader("Access-Control-Max-Age", "600");
   }
 
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    requestedHeaders || "Content-Type, Authorization"
-  );
   res.setHeader("Vary", "Origin, Access-Control-Request-Headers");
 
   if (req.method === "OPTIONS") {
-    if (hasOrigin && !IsAllowedOrigin(origin)) {
+    if (hasOrigin && !originAllowed) {
       return res.sendStatus(403);
     }
 
@@ -209,7 +249,7 @@ app.use((req, res, next) => {
 
 app.use(
   express.json({
-    limit: "10mb",
+    limit: jsonBodyLimit,
     type: ["application/json", "application/*+json"],
   })
 );
@@ -228,29 +268,15 @@ if (process.env.NODE_ENV !== "production") {
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
-  port: 3306,
+  port: dbPort,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  ssl: { rejectUnauthorized: false },
+  ssl: { rejectUnauthorized: dbSslRejectUnauthorized },
   waitForConnections: true,
-  connectionLimit: 10
+  connectionLimit: 10,
+  connectTimeout: 10000,
 }).promise();
-
-
-/*const pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT) || 3306,
-    user: "Team8@librarydatabaseteam8",
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-
-    ssl: {
-      rejectUnauthorized: false
-    },
-    connectTimeout: 10000
-})
-.promise();  */
 
 const searchSorts = {
   title: "title ASC",
@@ -495,6 +521,49 @@ function ParseImageUploadDataUrl(value) {
   }
 }
 
+function DetectImageMimeTypeFromBuffer(buffer) {
+  if (!Buffer.isBuffer(buffer) || buffer.length < 12) {
+    return null;
+  }
+
+  if (buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) {
+    return "image/jpeg";
+  }
+
+  if (
+    buffer[0] === 0x89 &&
+    buffer[1] === 0x50 &&
+    buffer[2] === 0x4e &&
+    buffer[3] === 0x47 &&
+    buffer[4] === 0x0d &&
+    buffer[5] === 0x0a &&
+    buffer[6] === 0x1a &&
+    buffer[7] === 0x0a
+  ) {
+    return "image/png";
+  }
+
+  if (
+    buffer[0] === 0x47 &&
+    buffer[1] === 0x49 &&
+    buffer[2] === 0x46 &&
+    buffer[3] === 0x38 &&
+    (buffer[4] === 0x37 || buffer[4] === 0x39) &&
+    buffer[5] === 0x61
+  ) {
+    return "image/gif";
+  }
+
+  if (
+    buffer.toString("ascii", 0, 4) === "RIFF" &&
+    buffer.toString("ascii", 8, 12) === "WEBP"
+  ) {
+    return "image/webp";
+  }
+
+  return null;
+}
+
 function GetUploadedImageExtension(mimeType) {
   return allowedImageMimeTypes[String(mimeType ?? "").toLowerCase()] ?? null;
 }
@@ -547,11 +616,17 @@ function ReadSessionToken(req) {
 }
 
 function ParseSessionToken(token) {
-  if (!token) {
+  if (!token || typeof token !== "string" || token.length > 2048) {
     return null;
   }
 
-  const [encodedPayload, encodedSignature] = token.split(".");
+  const parts = token.split(".");
+
+  if (parts.length !== 2) {
+    return null;
+  }
+
+  const [encodedPayload, encodedSignature] = parts;
 
   if (!encodedPayload || !encodedSignature) {
     return null;
@@ -963,7 +1038,7 @@ function BuildSearchQuery({ q, category, availableOnly, sort, limit }) {
           b.publisher,
           b.shelf_number AS shelfNumber,
           b.publication_date AS publicationDate,
-          b.cover_image_url AS coverImageUrl,
+          ${coverImageSelect.book},
           NULL AS runtime,
           ${holdCountsSql}
         FROM items i
@@ -996,7 +1071,7 @@ function BuildSearchQuery({ q, category, availableOnly, sort, limit }) {
           p.publisher,
           p.shelf_number AS shelfNumber,
           p.publication_date AS publicationDate,
-          p.cover_image_url AS coverImageUrl,
+          ${coverImageSelect.periodical},
           NULL AS runtime,
           ${holdCountsSql}
         FROM items i
@@ -1027,7 +1102,7 @@ function BuildSearchQuery({ q, category, availableOnly, sort, limit }) {
           am.publisher,
           am.shelf_number AS shelfNumber,
           am.publication_date AS publicationDate,
-          am.cover_image_url AS coverImageUrl,
+          ${coverImageSelect.audiovisualmedia},
           am.runtime,
           ${holdCountsSql}
         FROM items i
@@ -1230,7 +1305,7 @@ async function GetManagedItemDetail(itemId) {
                 b.publisher,
                 b.publication_date AS publicationDate,
                 b.summary,
-                b.cover_image_url AS coverImageUrl,
+                ${coverImageSelect.book},
                 a.first_name AS authorFirstName,
                 a.last_name AS authorLastName
             FROM books b
@@ -1260,7 +1335,7 @@ async function GetManagedItemDetail(itemId) {
                 p.publisher,
                 p.publication_date AS publicationDate,
                 p.summary,
-                p.cover_image_url AS coverImageUrl
+                ${coverImageSelect.periodical}
             FROM periodicals p
             WHERE p.item_id = ?
             `,
@@ -1282,7 +1357,7 @@ async function GetManagedItemDetail(itemId) {
                 am.publisher,
                 am.publication_date AS publicationDate,
                 am.summary,
-                am.cover_image_url AS coverImageUrl,
+                ${coverImageSelect.audiovisualmedia},
                 am.runtime,
                 c.first_name AS contributorFirstName,
                 c.last_name AS contributorLastName,
@@ -1314,7 +1389,21 @@ async function GetManagedItemDetail(itemId) {
   return rows.length === 0 ? null : { ...baseRow, ...rows[0] };
 }
 
+function GetCoverColumnExpression(selectExpression) {
+  const normalized = String(selectExpression ?? "").trim();
+
+  if (!normalized || /^NULL\b/i.test(normalized)) {
+    return "NULL";
+  }
+
+  return normalized.replace(/\s+AS\s+\w+\s*$/i, "").trim() || "NULL";
+}
+
 function GetPatronItemSelectColumns() {
+  const bookCover = GetCoverColumnExpression(coverImageSelect.book);
+  const periodicalCover = GetCoverColumnExpression(coverImageSelect.periodical);
+  const mediaCover = GetCoverColumnExpression(coverImageSelect.audiovisualmedia);
+
   return `
         CASE
             WHEN b.item_id IS NOT NULL THEN 'book'
@@ -1384,9 +1473,9 @@ function GetPatronItemSelectColumns() {
             NULL
         ) AS publicationDate,
         COALESCE(
-            b.cover_image_url,
-            per.cover_image_url,
-            am.cover_image_url,
+            ${bookCover},
+            ${periodicalCover},
+            ${mediaCover},
             NULL
         ) AS coverImageUrl,
         am.runtime AS runtime
@@ -1622,10 +1711,19 @@ app.put(["/account/password", "/api/account/password"], async (req, res) => {
       return res.status(400).json({ error: "Passwords do not match." });
     }
 
-    if (newPassword.length < 8) {
-      return res.status(400).json({
-        error: "New password must be at least 8 characters long.",
-      });
+    const passwordError = ValidatePasswordStrength(newPassword);
+
+    if (passwordError) {
+      return res.status(400).json({ error: passwordError });
+    }
+
+    if (
+      !ConsumeRateLimit(GetRateLimitKey(req, "change-password"), {
+        windowMs: 15 * 60 * 1000,
+        maxAttempts: 10,
+      })
+    ) {
+      return SendRateLimited(res);
     }
 
     const account = await FindPasswordResetAccountBySubject({
@@ -1792,7 +1890,7 @@ app.get(["/loans", "/api/loans"], async (req, res) => {
                     b.publisher AS publisher,
                     b.shelf_number AS shelfNumber,
                     b.publication_date AS publicationDate,
-                    b.cover_image_url AS coverImageUrl,
+                    ${coverImageSelect.book},
                     NULL AS runtime,
                     h.hold_origin_date AS holdStart,
                     h.hold_expiration_date AS holdEnd,
@@ -1820,7 +1918,7 @@ app.get(["/loans", "/api/loans"], async (req, res) => {
                     p.publisher AS publisher,
                     p.shelf_number AS shelfNumber,
                     p.publication_date AS publicationDate,
-                    p.cover_image_url AS coverImageUrl,
+                    ${coverImageSelect.periodical},
                     NULL AS runtime,
                     h.hold_origin_date AS holdStart,
                     h.hold_expiration_date AS holdEnd,
@@ -1852,7 +1950,7 @@ app.get(["/loans", "/api/loans"], async (req, res) => {
                     am.publisher AS publisher,
                     am.shelf_number AS shelfNumber,
                     am.publication_date AS publicationDate,
-                    am.cover_image_url AS coverImageUrl,
+                    ${coverImageSelect.audiovisualmedia},
                     am.runtime AS runtime,
                     h.hold_origin_date AS holdStart,
                     h.hold_expiration_date AS holdEnd,
@@ -1920,7 +2018,7 @@ app.get(["/mainitems", "/api/mainitems"], async (req, res) => {
               l.language,
               g.genre,
               b.summary,
-              b.cover_image_url,
+              ${coverImageSelect.book},
               i.available,
               'book' AS category
           FROM (
@@ -1930,7 +2028,6 @@ app.get(["/mainitems", "/api/mainitems"], async (req, res) => {
               LIMIT 4
           ) AS last4
           JOIN books b ON b.item_id = last4.item_id
-          LEFT JOIN authors a ON b.item_id = a.item_id
           LEFT JOIN items i ON b.item_id = i.item_id
           LEFT JOIN book_types bt ON bt.book_type_code = b.book_type_code
           LEFT JOIN languages l ON l.language_code = b.language_code
@@ -1945,7 +2042,7 @@ app.get(["/mainitems", "/api/mainitems"], async (req, res) => {
               l.language,
               g.genre,
               p.summary,
-              p.cover_image_url,
+              ${coverImageSelect.periodical},
               i.available,
               'periodical' AS category
           FROM (
@@ -1968,7 +2065,7 @@ app.get(["/mainitems", "/api/mainitems"], async (req, res) => {
                 WHERE c.item_id = am.item_id
               ) AS creator,
               'audiovisualmedia' AS category,
-              am.cover_image_url AS coverImageUrl,
+              ${coverImageSelect.audiovisualmedia},
               am.item_id as itemId,
               am.publication_date AS publicationDate,
               am.publisher,
@@ -1987,7 +2084,6 @@ app.get(["/mainitems", "/api/mainitems"], async (req, res) => {
               LIMIT 4
           ) AS last4
           JOIN audiovisual_media am ON am.item_id = last4.item_id
-          LEFT JOIN contributors c ON am.item_id = c.item_id
           LEFT JOIN items i ON am.item_id = i.item_id
           LEFT JOIN audiovisual_media_types amt ON am.audiovisual_media_type_code = amt.audiovisual_media_type_code
           LEFT JOIN languages l ON am.language_code = l.language_code
@@ -3032,10 +3128,20 @@ app.get("/uploads/:filename", async (req, res) => {
 
   try {
     const filePath = path.resolve(uploadsDirectory, filename);
+
+    if (
+      filePath !== uploadsDirectory &&
+      !filePath.startsWith(`${uploadsDirectory}${path.sep}`)
+    ) {
+      return res.status(400).json({ error: "Invalid upload filename." });
+    }
+
     const fileContents = await readFile(filePath);
 
     res.setHeader("Content-Type", GetUploadedImageContentType(filename));
     res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("Content-Disposition", "inline");
+    res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
     res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
     return res.send(fileContents);
   } catch (error) {
@@ -3060,6 +3166,15 @@ app.post(["/uploads/images", "/api/uploads/images"], async (req, res) => {
       return;
     }
 
+    if (
+      !ConsumeRateLimit(GetRateLimitKey(req, "image-upload"), {
+        windowMs: 15 * 60 * 1000,
+        maxAttempts: 40,
+      })
+    ) {
+      return SendRateLimited(res);
+    }
+
     const parsedImage = ParseImageUploadDataUrl(req.body?.dataUrl);
     const originalFilename = NormalizeOptionalText(req.body?.filename, 255);
 
@@ -3067,17 +3182,25 @@ app.post(["/uploads/images", "/api/uploads/images"], async (req, res) => {
       return res.status(400).json({ error: "Invalid image upload payload." });
     }
 
-    const extension = GetUploadedImageExtension(parsedImage.mimeType);
+    if (!parsedImage.buffer.length || parsedImage.buffer.length > maxUploadedImageBytes) {
+      return res.status(400).json({
+        error: "Image upload must be between 1 byte and 5 MB.",
+      });
+    }
+
+    const detectedMimeType = DetectImageMimeTypeFromBuffer(parsedImage.buffer);
+
+    if (!detectedMimeType || detectedMimeType !== parsedImage.mimeType) {
+      return res.status(400).json({
+        error: "Uploaded file content does not match a supported image type.",
+      });
+    }
+
+    const extension = GetUploadedImageExtension(detectedMimeType);
 
     if (!extension) {
       return res.status(400).json({
         error: "Only JPG, PNG, WEBP, and GIF images are supported.",
-      });
-    }
-
-    if (!parsedImage.buffer.length || parsedImage.buffer.length > maxUploadedImageBytes) {
-      return res.status(400).json({
-        error: "Image upload must be between 1 byte and 5 MB.",
       });
     }
 
@@ -3564,7 +3687,7 @@ app.post(["/login", "/api/login"], async (req, res) => {
       const user = patronUsers[0];
 
       if (!user.is_active) {
-        return res.status(403).json({ error: "Account is inactive" });
+        return res.status(401).json({ error: invalidCredentialsMessage });
       }
 
       const passwordMatches = await VerifyPassword(password, user.password_hash);
@@ -3585,7 +3708,9 @@ app.post(["/login", "/api/login"], async (req, res) => {
         patronId: user.patron_id,
       });
 
-      return res.json({
+      return res
+        .set("Cache-Control", "no-store")
+        .json({
         message: "Login successful",
         sessionToken: session.token,
         sessionExpiresAt: session.expiresAt,
@@ -3610,7 +3735,7 @@ app.post(["/login", "/api/login"], async (req, res) => {
       const user = staffUsers[0];
 
       if (!user.is_active) {
-        return res.status(403).json({ error: "Account is inactive" });
+        return res.status(401).json({ error: invalidCredentialsMessage });
       }
 
       const passwordMatches = await VerifyPassword(password, user.password_hash);
@@ -3631,7 +3756,9 @@ app.post(["/login", "/api/login"], async (req, res) => {
         staffId: user.staff_id,
       });
 
-      return res.json({
+      return res
+        .set("Cache-Control", "no-store")
+        .json({
         message: "Login successful",
         sessionToken: session.token,
         sessionExpiresAt: session.expiresAt,
@@ -3789,10 +3916,10 @@ app.post(["/reset-password", "/api/reset-password"], async (req, res) => {
       return res.status(400).json({ error: "Passwords do not match." });
     }
 
-    if (newPassword.length < 8) {
-      return res.status(400).json({
-        error: "New password must be at least 8 characters long.",
-      });
+    const passwordError = ValidatePasswordStrength(newPassword);
+
+    if (passwordError) {
+      return res.status(400).json({ error: passwordError });
     }
 
     const parsedToken = ParsePasswordResetToken(token);
@@ -5255,6 +5382,31 @@ function ValidatePasswordStrength(password) {
     return "Password must be 128 characters or fewer.";
   }
 
+  if (/\s/.test(normalizedPassword)) {
+    return "Password cannot contain spaces.";
+  }
+
+  if (!/[a-z]/i.test(normalizedPassword) || !/[0-9]/.test(normalizedPassword)) {
+    return "Password must include at least one letter and one number.";
+  }
+
+  const commonPasswords = new Set([
+    "password",
+    "password1",
+    "password123",
+    "12345678",
+    "123456789",
+    "qwerty123",
+    "letmein1",
+    "welcome1",
+    "admin123",
+    "library1",
+  ]);
+
+  if (commonPasswords.has(normalizedPassword.toLowerCase())) {
+    return "Choose a less common password.";
+  }
+
   return null;
 }
 
@@ -6326,27 +6478,55 @@ app.use((error, req, res, next) => {
   res.status(500).json({ error: "Internal server error." });
 });
 
+const coverImageSelect = {
+  book: "NULL AS coverImageUrl",
+  periodical: "NULL AS coverImageUrl",
+  audiovisualmedia: "NULL AS coverImageUrl",
+};
+
 async function EnsureCoverImageColumns() {
-  const tables = ["books", "periodicals", "audiovisual_media"];
+  const tables = [
+    { tableName: "books", key: "book", expression: "b.cover_image_url AS coverImageUrl" },
+    {
+      tableName: "periodicals",
+      key: "periodical",
+      expression: "p.cover_image_url AS coverImageUrl",
+    },
+    {
+      tableName: "audiovisual_media",
+      key: "audiovisualmedia",
+      expression: "am.cover_image_url AS coverImageUrl",
+    },
+  ];
 
-  for (const tableName of tables) {
-    const [rows] = await pool.query(
-      `
-      SELECT 1 AS present
-      FROM information_schema.COLUMNS
-      WHERE TABLE_SCHEMA = DATABASE()
-        AND TABLE_NAME = ?
-        AND COLUMN_NAME = 'cover_image_url'
-      LIMIT 1
-      `,
-      [tableName]
-    );
-
-    if (rows.length === 0) {
-      await pool.query(
-        `ALTER TABLE \`${tableName}\` ADD COLUMN cover_image_url VARCHAR(2048) NULL AFTER title`
+  for (const table of tables) {
+    try {
+      const [rows] = await pool.query(
+        `
+        SELECT 1 AS present
+        FROM information_schema.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = ?
+          AND COLUMN_NAME = 'cover_image_url'
+        LIMIT 1
+        `,
+        [table.tableName]
       );
-      console.log(`Added cover_image_url column to ${tableName}`);
+
+      if (rows.length === 0) {
+        await pool.query(
+          `ALTER TABLE \`${table.tableName}\` ADD COLUMN cover_image_url VARCHAR(2048) NULL AFTER title`
+        );
+        console.log(`Added cover_image_url column to ${table.tableName}`);
+      }
+
+      coverImageSelect[table.key] = table.expression;
+    } catch (error) {
+      coverImageSelect[table.key] = "NULL AS coverImageUrl";
+      console.error(
+        `Using NULL cover images for ${table.tableName}:`,
+        error instanceof Error ? error.message : error
+      );
     }
   }
 }

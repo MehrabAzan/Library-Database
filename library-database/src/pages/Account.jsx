@@ -103,132 +103,117 @@ export default function Account() {
   }, [userKey]);
 
   return (
-    <div className="flex flex-col gap-8 lg:flex-row">
-      <main className="flex-1 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-        <div className="mb-2 flex justify-evenly items-center flex-wrap gap-4">
-          <h1 className="flex-1 text-4xl font-bold tracking-tight text-slate-800">
-            Account
-          </h1>
-          <nav className="flex-3 space-y-1 flex justify-evenly pt-4">
-            {navLinks.map((link) => (
-              <NavLink
-                key={link.to}
-                to={link.to}
-                end={link.end}
-                className={({ isActive }) =>
-                  `block rounded-lg px-4 py-2.5 text-md transition-all ${
-                    isActive
-                      ? "bg-sky-50 text-sky-700 shadow-sm font-bold"
-                      : "text-slate-600 hover:bg-sky-100/50 font-medium hover:text-sky-800"
-                  }`
-                }
-              >
-                {link.label}
-              </NavLink>
-            ))}
-          </nav>
+    <div className="space-y-8">
+      <div className="flex flex-col gap-4 border-b border-ink/10 pb-6 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-brass-deep">Membership</p>
+          <h1 className="font-display text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-tight text-ink-deep mt-2 text-4xl">Account</h1>
+          <p className="mt-2 text-sm text-ink/60">
+            Profile, loans, holds, and settings in one place.
+          </p>
         </div>
+        <nav className="flex flex-wrap gap-1 rounded-md border border-ink/10 bg-paper/70 p-1">
+          {navLinks.map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              end={link.end}
+              className={({ isActive }) =>
+                isActive ? "relative rounded-md px-[0.7rem] py-[0.45rem] text-sm font-semibold transition-colors bg-ink-soft/10 text-ink" : "relative rounded-md px-[0.7rem] py-[0.45rem] text-sm font-semibold text-ink/80 transition-colors hover:bg-ink/5 hover:text-ink"
+              }
+            >
+              {link.label}
+            </NavLink>
+          ))}
+        </nav>
+      </div>
 
-        {outlet ? (
-          outlet
-        ) : (
-          <section className="space-y-4 pt-2 rounded-xl bg-slate-100/40  border border-gray-100 p-4 inset-shadow-sm ">
-            <h2 className="text-3xl font-semibold tracking-tight text-slate-800">
+      {outlet ? (
+        outlet
+      ) : (
+        <section className="space-y-6">
+          <div>
+            <h2 className="font-display text-2xl font-semibold text-ink-deep">
               Information
             </h2>
-            <div className="rounded-2xl bg-slate-200/40 p-4 border border-slate-300">
-              <p className="text-sm text-slate-600">
-                {isPatron
-                  ? "View your membership details below. Use the menu to manage loans and settings."
-                  : isStaff
-                    ? "Logged in as staff."
-                    : "Account details are displayed below."}
-              </p>
+            <p className="mt-2 text-sm leading-6 text-ink/65">
+              {isPatron
+                ? "View your membership details below. Use the menu to manage loans and settings."
+                : isStaff
+                  ? "Logged in as staff."
+                  : "Account details are displayed below."}
+            </p>
+          </div>
+
+          {loading && (
+            <p className="animate-pulse text-sm font-medium text-ink/65">
+              Loading account information...
+            </p>
+          )}
+
+          {!loading && error && (
+            <div className="border border-danger/25 bg-danger/10 px-4 py-3 text-sm font-medium text-danger">
+              {error}
             </div>
+          )}
 
-            {loading && (
-              <div className="flex items-center gap-3 text-slate-700 font-medium animate-pulse">
-                <div className="h-4 w-4 rounded-full bg-sky-400"></div>
-                Loading account information...
-              </div>
-            )}
-
-            {!loading && error && (
-              <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 font-medium">
-                {error}
-              </div>
-            )}
-
-            {!loading && !error && account && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div>
-                    <span className="block text-xs font-bold text-slate-700 uppercase tracking-widest mb-1">
-                      Full Name
-                    </span>
-                    <span className="text-lg font-semibold text-sky-800">
-                      {account.first_name} {account.last_name}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="block text-xs font-bold text-slate-700 uppercase tracking-widest mb-1">
-                      Email Address
-                    </span>
-                    <span className="text-lg font-semibold text-sky-800">
-                      {account.email}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="block text-xs font-bold text-slate-700 uppercase tracking-widest mb-1">
-                      {account.user_type === "staff" ? "Staff ID" : "Member ID"}
-                    </span>
-                    <span className="text-lg font-semibold text-sky-800 font-mono">
-                      #{account.staff_id ?? account.patron_id}
-                    </span>
-                  </div>
+          {!loading && !error && account && (
+            <div className="grid grid-cols-1 gap-8 border-y border-ink/10 py-6 md:grid-cols-2">
+              <div className="space-y-5">
+                <div>
+                  <span className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">Full Name</span>
+                  <span className="text-lg font-semibold text-ink-deep">
+                    {account.first_name} {account.last_name}
+                  </span>
                 </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <span className="block text-xs font-bold text-slate-700 uppercase tracking-widest mb-1">
-                      Date of Birth
-                    </span>
-                    <span className="text-lg font-semibold text-sky-800">
-                      {FormatDateOfBirth(account.date_of_birth)}
-                    </span>
-                  </div>
-                  {account.phone_number && (
-                    <div>
-                      <span className="block text-xs font-bold text-slate-700 uppercase tracking-widest mb-1">
-                        Phone Number
-                      </span>
-                      <span className="text-lg font-semibold text-sky-800">
-                        {account.phone_number}
-                      </span>
-                    </div>
-                  )}
-                  {account.address && (
-                    <div>
-                      <span className="block text-xs font-bold text-slate-700 uppercase tracking-widest mb-1">
-                        Primary Address
-                      </span>
-                      <span className="text-lg font-semibold text-sky-800 leading-tight">
-                        {account.address}
-                      </span>
-                    </div>
-                  )}
+                <div>
+                  <span className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">Email Address</span>
+                  <span className="text-lg font-semibold text-ink-deep">
+                    {account.email}
+                  </span>
+                </div>
+                <div>
+                  <span className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">
+                    {account.user_type === "staff" ? "Staff ID" : "Member ID"}
+                  </span>
+                  <span className="font-mono text-lg font-semibold text-ink-deep">
+                    #{account.staff_id ?? account.patron_id}
+                  </span>
                 </div>
               </div>
-            )}
 
-            {!loading && !error && !account && (
-              <p className="text-slate-700 italic">
-                No account records found.
-              </p>
-            )}
-          </section>
-        )}
-      </main>
+              <div className="space-y-5">
+                <div>
+                  <span className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">Date of Birth</span>
+                  <span className="text-lg font-semibold text-ink-deep">
+                    {FormatDateOfBirth(account.date_of_birth)}
+                  </span>
+                </div>
+                {account.phone_number && (
+                  <div>
+                    <span className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">Phone Number</span>
+                    <span className="text-lg font-semibold text-ink-deep">
+                      {account.phone_number}
+                    </span>
+                  </div>
+                )}
+                {account.address && (
+                  <div>
+                    <span className="mb-1.5 block text-[0.8rem] font-semibold uppercase tracking-wide text-ink/70">Primary Address</span>
+                    <span className="text-lg font-semibold leading-tight text-ink-deep">
+                      {account.address}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {!loading && !error && !account && (
+            <p className="italic text-ink/65">No account records found.</p>
+          )}
+        </section>
+      )}
     </div>
   );
 }
