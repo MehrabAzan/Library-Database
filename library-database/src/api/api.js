@@ -1,7 +1,7 @@
-//const localApiOrigin = process.env.VITE_API_ORIGIN || "http://localhost:3000";
-const localApiOrigin =
-  import.meta.env.VITE_API_ORIGIN ||
-  "https://library-database-baclend-api.onrender.com";
+const configuredApiOrigin = String(import.meta.env.VITE_API_ORIGIN ?? "")
+  .trim()
+  .replace(/\/+$/, "");
+const localDevApiOrigin = configuredApiOrigin || "http://localhost:3000";
 
 const sessionStorageKey = "session";
 const userStorageKey = "user";
@@ -26,13 +26,26 @@ function BuildRequestUrls(url) {
   if (
     typeof window === "undefined" ||
     /^https?:\/\//.test(url) ||
-    !url.startsWith("/api/") ||
-    !["localhost", "127.0.0.1"].includes(window.location.hostname)
+    !url.startsWith("/api/")
   ) {
     return [url];
   }
-  return [url, `${localApiOrigin}${url.replace(/^\/api/, "")}`];
+
+  const isLocalHost = ["localhost", "127.0.0.1"].includes(
+    window.location.hostname,
+  );
+
+  if (isLocalHost) {
+    return [url, `${localDevApiOrigin}${url.replace(/^\/api/, "")}`];
+  }
+
+  if (configuredApiOrigin) {
+    return [`${configuredApiOrigin}${url.replace(/^\/api/, "")}`];
+  }
+
+  return [url];
 }
+
 function ShouldRetryAgainstBackend(error) {
   if (!(error instanceof Error)) {
     return false;
@@ -182,6 +195,10 @@ export function UpdateStoredUser(patch) {
 function BuildAuthenticatedHeaders(headers) {
   const nextHeaders = new Headers(headers ?? {});
 
+  if (!nextHeaders.has("Accept")) {
+    nextHeaders.set("Accept", "application/json");
+  }
+
   if (typeof window === "undefined") {
     return nextHeaders;
   }
@@ -197,10 +214,11 @@ function BuildAuthenticatedHeaders(headers) {
   return nextHeaders;
 }
 
-function BuildRequestOptions(options) {
+function BuildRequestOptions(options = {}) {
   return {
     ...options,
-    headers: BuildAuthenticatedHeaders(options?.headers),
+    credentials: "omit",
+    headers: BuildAuthenticatedHeaders(options.headers),
   };
 }
 

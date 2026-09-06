@@ -7,8 +7,9 @@ export default function Registration() {
   const { showSuccess, showError } = useMessage();
 
   return (
-    <section className="mx-auto w-full max-w-3xl border-t-[3px] border-brass bg-white/80 px-6 py-8 shadow-soft sm:px-9 sm:py-10 sm:pb-12">
-      <p className="text-xs font-bold uppercase tracking-[0.16em] text-brass-deep text-center">Membership</p>
+    <div className="mx-auto flex min-h-[70vh] max-w-3xl items-center px-1 py-8">
+    <section className="w-full border-t-[3px] border-brass bg-white/85 px-6 py-9 shadow-soft sm:px-10 sm:py-11">
+      <p className="text-center text-xs font-bold uppercase tracking-[0.16em] text-brass-deep">Membership</p>
       <h1 className="mt-2 text-center font-display text-3xl font-semibold tracking-tight text-ink-deep sm:text-4xl">
         Get a library card
       </h1>
@@ -137,5 +138,6 @@ export default function Registration() {
         </div>
       </form>
     </section>
+    </div>
   );
 }

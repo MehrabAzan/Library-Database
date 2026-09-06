@@ -105,14 +105,14 @@ export default function Account() {
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-4 border-b border-ink/10 pb-6 sm:flex-row sm:items-end sm:justify-between">
-        <div>
+        <div className="border-l-[3px] border-brass pl-4">
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-brass-deep">Membership</p>
-          <h1 className="font-display text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-tight text-ink-deep mt-2 text-4xl">Account</h1>
+          <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight text-ink-deep">Account</h1>
           <p className="mt-2 text-sm text-ink/60">
             Profile, loans, holds, and settings in one place.
           </p>
         </div>
-        <nav className="flex flex-wrap gap-1 rounded-md border border-ink/10 bg-paper/70 p-1">
+        <nav className="flex flex-wrap gap-1 rounded-md border border-ink/10 bg-white/80 p-1 shadow-soft">
           {navLinks.map((link) => (
             <NavLink
               key={link.to}

@@ -510,7 +510,7 @@ export function CarouselItem({ itemData }) {
   const isStaff = user?.user_type === "staff";
   const canPlaceHold = Number(itemData.is_removed ?? 0) !== 1;
   return (
-    <article className="flex w-[15.5rem] shrink-0 snap-start flex-col gap-3 border border-ink/10 bg-white/80 px-[0.9rem] py-4 transition-[border-color,transform,background-color] duration-150 hover:-translate-y-0.5 hover:border-brass/55 hover:bg-white">
+    <article className="flex w-[15.5rem] shrink-0 snap-start flex-col gap-3 border border-ink/10 bg-white/90 px-3.5 py-4 shadow-soft transition duration-150 hover:-translate-y-1 hover:border-brass/50 hover:bg-white hover:shadow-[0_12px_28px_rgb(7_42_48_/_0.1)]">
       <CarouselItemHolder data={itemData} />
       <div className="mt-auto space-y-2 text-center">
         <p

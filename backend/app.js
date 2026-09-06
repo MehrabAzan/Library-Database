@@ -95,11 +95,15 @@ const passwordResetSecret =
 
 if (
   process.env.NODE_ENV === "production" &&
-  passwordResetSecret === sessionSecret
+  (!process.env.PASSWORD_RESET_SECRET?.trim() ||
+    passwordResetSecret === sessionSecret ||
+    weakSessionSecrets.has(passwordResetSecret) ||
+    passwordResetSecret.length < 32)
 ) {
-  console.warn(
-    "PASSWORD_RESET_SECRET is not set; falling back to SESSION_SECRET. Set a separate value in production."
+  console.error(
+    "Set PASSWORD_RESET_SECRET to a strong random value (at least 32 characters), different from SESSION_SECRET, in production before starting the server."
   );
+  process.exit(1);
 }
 
 function ParseAllowedOrigins() {
@@ -132,9 +136,10 @@ const defaultAppOrigin =
   "http://localhost:5173";
 
 if (process.env.NODE_ENV === "production" && allowedOrigins.length === 0) {
-  console.warn(
-    "No APP_ORIGIN / FRONTEND_ORIGIN / CORS_ALLOWED_ORIGINS configured. Browser clients will be blocked by CORS."
+  console.error(
+    "Set APP_ORIGIN (or FRONTEND_ORIGIN / CORS_ALLOWED_ORIGINS) to your Azure Static Web Apps origin in production before starting the server."
   );
+  process.exit(1);
 }
 
 const rateLimitBuckets = new Map();
@@ -156,7 +161,9 @@ function ApplySecurityHeaders(req, res) {
     "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
   );
   res.setHeader("Cross-Origin-Resource-Policy", "same-site");
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
   res.setHeader("X-DNS-Prefetch-Control", "off");
+  res.setHeader("X-Permitted-Cross-Domain-Policies", "none");
   res.setHeader(
     "Content-Security-Policy",
     "default-src 'none'; frame-ancestors 'none'; base-uri 'none'"
@@ -173,6 +180,11 @@ function ApplySecurityHeaders(req, res) {
       "max-age=31536000; includeSubDomains; preload"
     );
   }
+}
+
+function SetNoStore(res) {
+  res.setHeader("Cache-Control", "no-store");
+  return res;
 }
 
 function ConsumeRateLimit(
@@ -465,17 +477,23 @@ function ParsePasswordResetToken(token) {
 }
 
 function GetApplicationOrigin(req) {
-  const origin = String(req.get("origin") ?? "").trim();
+  const origin = String(req.get("origin") ?? "")
+    .trim()
+    .replace(/\/+$/, "");
 
-  if (/^https?:\/\//i.test(origin)) {
-    return origin.replace(/\/+$/, "");
+  if (IsAllowedOrigin(origin)) {
+    return origin;
   }
 
   const referer = String(req.get("referer") ?? "").trim();
 
   if (/^https?:\/\//i.test(referer)) {
     try {
-      return new URL(referer).origin;
+      const refererOrigin = new URL(referer).origin.replace(/\/+$/, "");
+
+      if (IsAllowedOrigin(refererOrigin)) {
+        return refererOrigin;
+      }
     } catch {
       // Fall through to the configured default origin.
     }
@@ -485,6 +503,14 @@ function GetApplicationOrigin(req) {
 }
 
 function GetBackendOrigin(req) {
+  const configuredOrigin = String(process.env.BACKEND_PUBLIC_ORIGIN ?? "")
+    .trim()
+    .replace(/\/+$/, "");
+
+  if (/^https?:\/\//i.test(configuredOrigin)) {
+    return configuredOrigin;
+  }
+
   const forwardedProto = String(req.get("x-forwarded-proto") ?? "")
     .split(",")[0]
     .trim()
@@ -1529,6 +1555,7 @@ function BuildPatronLoanQuery({ statusClause, orderBy }) {
 
 app.get(["/account", "/api/account"], async (req, res) => {
   try {
+    SetNoStore(res);
     const user = await RequireAuthenticatedUser(req, res);
 
     if (!user) {
@@ -1595,11 +1622,22 @@ app.get(["/account", "/api/account"], async (req, res) => {
 
 app.put(["/account/contact", "/api/account/contact"], async (req, res) => {
   try {
+    SetNoStore(res);
     const user = await RequireAuthenticatedUser(req, res);
 
     if (!user) {
       return;
     }
+
+    if (
+      !ConsumeRateLimit(GetRateLimitKey(req, "account-contact"), {
+        windowMs: 15 * 60 * 1000,
+        maxAttempts: 30,
+      })
+    ) {
+      return SendRateLimited(res);
+    }
+
     const {
       firstname,
       lastname,
@@ -1691,6 +1729,7 @@ app.put(["/account/contact", "/api/account/contact"], async (req, res) => {
 
 app.put(["/account/password", "/api/account/password"], async (req, res) => {
   try {
+    SetNoStore(res);
     const user = await RequireAuthenticatedUser(req, res);
 
     if (!user) {
@@ -2328,6 +2367,15 @@ app.put(["/admin/users/:userType/:userId", "/api/admin/users/:userType/:userId"]
       return;
     }
 
+    if (
+      !ConsumeRateLimit(GetRateLimitKey(req, "admin-user-write"), {
+        windowMs: 15 * 60 * 1000,
+        maxAttempts: 60,
+      })
+    ) {
+      return SendRateLimited(res);
+    }
+
     const userType = NormalizeManagedUserType(req.params.userType);
     const userId = ParsePositiveInteger(req.params.userId);
 
@@ -2506,6 +2554,15 @@ app.delete(["/admin/users/:userType/:userId", "/api/admin/users/:userType/:userI
 
     if (!user) {
       return;
+    }
+
+    if (
+      !ConsumeRateLimit(GetRateLimitKey(req, "admin-user-write"), {
+        windowMs: 15 * 60 * 1000,
+        maxAttempts: 60,
+      })
+    ) {
+      return SendRateLimited(res);
     }
 
     const userType = NormalizeManagedUserType(req.params.userType);
@@ -3660,6 +3717,8 @@ app.post(
 // Login endpoint
 app.post(["/login", "/api/login"], async (req, res) => {
   try {
+    SetNoStore(res);
+
     if (
       !ConsumeRateLimit(GetRateLimitKey(req, "login"), {
         windowMs: 15 * 60 * 1000,
@@ -3675,6 +3734,15 @@ app.post(["/login", "/api/login"], async (req, res) => {
 
     if (!email || !password) {
       return res.status(401).json({ error: invalidCredentialsMessage });
+    }
+
+    if (
+      !ConsumeRateLimit(`${GetRateLimitKey(req, "login-email")}:${email}`, {
+        windowMs: 15 * 60 * 1000,
+        maxAttempts: 8,
+      })
+    ) {
+      return SendRateLimited(res);
     }
 
     // 1. try to find patrons first
@@ -3708,9 +3776,7 @@ app.post(["/login", "/api/login"], async (req, res) => {
         patronId: user.patron_id,
       });
 
-      return res
-        .set("Cache-Control", "no-store")
-        .json({
+      return res.json({
         message: "Login successful",
         sessionToken: session.token,
         sessionExpiresAt: session.expiresAt,
@@ -3756,9 +3822,7 @@ app.post(["/login", "/api/login"], async (req, res) => {
         staffId: user.staff_id,
       });
 
-      return res
-        .set("Cache-Control", "no-store")
-        .json({
+      return res.json({
         message: "Login successful",
         sessionToken: session.token,
         sessionExpiresAt: session.expiresAt,
@@ -3786,6 +3850,8 @@ app.post(["/login", "/api/login"], async (req, res) => {
 // Registration endpoint
 app.post(["/register", "/api/register"], async (req, res) => {
   try {
+    SetNoStore(res);
+
     if (
       !ConsumeRateLimit(GetRateLimitKey(req, "register"), {
         windowMs: 60 * 60 * 1000,
@@ -3843,6 +3909,17 @@ app.post(["/register", "/api/register"], async (req, res) => {
 
 app.post(["/forgot-password", "/api/forgot-password"], async (req, res) => {
   try {
+    SetNoStore(res);
+
+    if (
+      !ConsumeRateLimit(GetRateLimitKey(req, "forgot-password-ip"), {
+        windowMs: 60 * 60 * 1000,
+        maxAttempts: 20,
+      })
+    ) {
+      return SendRateLimited(res);
+    }
+
     const email = ValidateEmailAddress(req.body?.email);
 
     if (!email) {
@@ -3893,6 +3970,8 @@ app.post(["/forgot-password", "/api/forgot-password"], async (req, res) => {
 
 app.post(["/reset-password", "/api/reset-password"], async (req, res) => {
   try {
+    SetNoStore(res);
+
     if (
       !ConsumeRateLimit(GetRateLimitKey(req, "reset-password"), {
         windowMs: 60 * 60 * 1000,
@@ -3992,10 +4071,20 @@ app.post(["/reset-password", "/api/reset-password"], async (req, res) => {
 
 app.post(["/staff/register", "/api/staff/register"], async (req, res) => {
   try {
+    SetNoStore(res);
     const user = await RequireStaffUser(req, res, { adminOnly: true });
 
     if (!user) {
       return;
+    }
+
+    if (
+      !ConsumeRateLimit(GetRateLimitKey(req, "staff-register"), {
+        windowMs: 60 * 60 * 1000,
+        maxAttempts: 20,
+      })
+    ) {
+      return SendRateLimited(res);
     }
 
     const firstname = String(req.body?.firstname ?? "").trim();
@@ -4098,6 +4187,15 @@ app.post(["/holds", "/api/holds"], async (req, res) => {
 
     if (!user) {
       return;
+    }
+
+    if (
+      !ConsumeRateLimit(GetRateLimitKey(req, "place-hold"), {
+        windowMs: 15 * 60 * 1000,
+        maxAttempts: 40,
+      })
+    ) {
+      return SendRateLimited(res);
     }
 
     const itemId = ParsePositiveInteger(req.body?.item_id);
@@ -4703,6 +4801,15 @@ app.post(["/checkout", "/api/checkout"], async (req, res) => {
       return;
     }
 
+    if (
+      !ConsumeRateLimit(GetRateLimitKey(req, "checkout"), {
+        windowMs: 15 * 60 * 1000,
+        maxAttempts: 60,
+      })
+    ) {
+      return SendRateLimited(res);
+    }
+
     await ClearExpiredHolds();
 
     const itemId = ParsePositiveInteger(req.body?.item_id);
@@ -5223,6 +5330,15 @@ app.post(["/fines/:fineId/pay", "/api/fines/:fineId/pay"], async (req, res) => {
 
     if (!user) {
       return;
+    }
+
+    if (
+      !ConsumeRateLimit(GetRateLimitKey(req, "fine-pay"), {
+        windowMs: 15 * 60 * 1000,
+        maxAttempts: 30,
+      })
+    ) {
+      return SendRateLimited(res);
     }
 
     await SyncCurrentFines();

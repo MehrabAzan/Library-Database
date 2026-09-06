@@ -30,7 +30,6 @@ import Logout from "./pages/Logout.jsx";
 import PopularityReport from "./pages/PopularityReport.jsx";
 import PatronSummaryReport from "./pages/PatronSummaryReport.jsx";
 import OverdueReport from "./pages/OverdueReport.jsx";
-import TestingReport from "./pages/TestingReport.jsx";
 import FineSummaryReport from "./pages/FineSummaryReport";
 import AccountHolds from "./pages/AccountHolds";
 import StaffLoans from "./pages/StaffLoans";
@@ -231,11 +230,11 @@ function App() {
             </div>
 
             <div className="px-4 sm:px-6">
-              <div className="mx-auto flex h-[4.75rem] w-full max-w-[1440px] items-center justify-between gap-4">
+              <div className="mx-auto flex h-20 w-full max-w-[1440px] items-center justify-between gap-4">
                 <div className="flex min-w-0 items-center gap-3">
                   <button
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    className="inline-flex items-center justify-center gap-2 rounded-lg px-[1.15rem] py-[0.65rem] text-sm font-semibold leading-tight transition-[background-color,color,border-color,transform] duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass active:enabled:translate-y-px disabled:cursor-not-allowed disabled:opacity-50 border border-ink/20 bg-transparent text-ink hover:enabled:border-ink/35 hover:enabled:bg-ink/5 !px-3 !py-2"
+                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-ink/20 bg-transparent px-3 py-2 text-sm font-semibold text-ink transition duration-150 hover:enabled:border-ink/35 hover:enabled:bg-ink/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass"
                     aria-controls="library-navigation"
                     aria-expanded={isSidebarOpen}
                     aria-label={
@@ -268,7 +267,7 @@ function App() {
                   >
                     <img
                       src="/Datahaven.jpg"
-                      className="h-12 w-12 rounded-[0.4rem] border border-ink/15 bg-white object-cover"
+                      className="h-12 w-12 rounded-md border border-ink/15 bg-white object-cover shadow-soft"
                       alt="Datahaven Libraries logo"
                     />
                     <div className="min-w-0">
@@ -332,7 +331,7 @@ function App() {
               }`}
             >
               <div className="h-full overflow-y-auto">
-                <div className="flex items-start justify-between gap-4 border-b border-ink/10 bg-paper/80 px-6 py-5">
+                <div className="flex items-start justify-between gap-4 border-b border-ink/10 bg-paper/90 px-6 py-5">
                   <div>
                     <p className="font-display text-base font-semibold text-ink-deep">
                       Library Menu
@@ -364,7 +363,7 @@ function App() {
               </div>
             </aside>
 
-            <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:px-8">
+            <main className="flex-1 overflow-y-auto px-4 py-8 sm:px-6 lg:px-10">
               <div className="mx-auto w-full max-w-[1440px]">
                 <Routes>
                   <Route path="/" element={<Home />} />
@@ -449,7 +448,6 @@ function App() {
                     path="/report/fine-summary"
                     element={<FineSummaryReport />}
                   />
-                  <Route path="/report/testing" element={<TestingReport />} />
 
                   <Route path="/forgotpassword" element={<ForgotPassword />} />
                 </Routes>

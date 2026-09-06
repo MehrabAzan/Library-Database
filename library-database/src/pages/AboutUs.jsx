@@ -1,9 +1,11 @@
 export default function AboutUs() {
   return (
-    <section className="space-y-12">
-      <div className="max-w-3xl">
-        <p className="text-xs font-bold uppercase tracking-[0.16em] text-brass-deep">About the Library</p>
-        <h1 className="font-display text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-tight text-ink-deep mt-2 text-4xl sm:text-5xl">
+    <section className="space-y-14">
+      <div className="max-w-3xl border-l-[3px] border-brass pl-4">
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-brass-deep">
+          About the Library
+        </p>
+        <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight text-ink-deep sm:text-5xl">
           About Datahaven
         </h1>
         <p className="mt-4 text-base leading-7 text-ink/70">
@@ -12,7 +14,7 @@ export default function AboutUs() {
         </p>
       </div>
 
-      <div className="grid gap-10 border-t border-ink/10 pt-8 md:grid-cols-2">
+      <div className="grid gap-12 border-t border-ink/10 pt-10 md:grid-cols-2">
         <div>
           <h2 className="font-display text-2xl font-semibold text-ink-deep">
             Welcome
